@@ -1,5 +1,5 @@
 ****************************************************************************
-                        0x7d8 Project Repository 
+                        0x7d8 Project Repository
 
                                                   last update  2008.10.26
 ****************************************************************************
@@ -54,22 +54,18 @@ http://coderepos.org/share/
 ** ディレクトリ構成 **
 /trunk
     README <-- this file
-
     /User1
-
         /Project1
             README
             ChangeLog
             /dir1
             /dir2
-
-		/Project2
-		    ...
-			...
-
-	/User2
-	    ...
-		...
+        /Project2
+            ...
+            ...
+        /User2
+            ...
+            ...
 
 /branches
     ...
@@ -81,11 +77,13 @@ http://coderepos.org/share/
 
 3. /trunk/User/Project を各プロジェクトのルートにする
     - READMEには下記項目を記述
-	    - プロジェクトの説明
-		- 動作環境
-		- 使用方法
-		- ライセンス
-		- 特記事項
+        - プロジェクトの説明
+        - 動作環境
+        - 使用方法
+        - ライセンス
+        - 特記事項
 
     - ChangeLog にはまあ時おり書いてください
-	- ディレクトリ構成は各プロジェクトに任せます
+    - ディレクトリ構成は各プロジェクトに任せます
+
+
