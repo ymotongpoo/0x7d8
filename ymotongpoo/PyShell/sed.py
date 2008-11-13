@@ -87,7 +87,14 @@ def version_opt(opt_arg=''):
     sys.exit()
 
 
+def suffix_opt(opt_arg=''):
+    suffix = ''
+    if len(opt_arg) != 0:
+        suffix = '.' + opt_arg
+    return suffix
+
 def quiet_opt(opt_arg=''):
+    # dummy
     sys.exit()
 
 
@@ -98,7 +105,6 @@ def s_command(command, line):
     return re.sub(command[1], command[2], line)
 
 def y_command(command, line):
-    # dummy
     if len(command[1]) != len(command[2]):
         print "transform string are not the same length"
         sys.exit(1)
@@ -106,7 +112,7 @@ def y_command(command, line):
         print "extra text at the end of a transform command"
         sys.exit(1)
     else:
-        for i, c in enumerate(command[1]):
+        for i in len(command[1]):
             line = re.sub(command[1][i], command[2][i], line)
         return line
 
@@ -114,6 +120,7 @@ options = {'-n' : quiet_opt,
            '-e' : expression_opt,
            '-f' : file_opt,
            '-V' : version_opt,
+           '-i' : suffix_opt,
            '-h' : usage,
            '--help' : usage
            }
@@ -128,8 +135,8 @@ def main():
         sys.exit()
     else:
         try:
-            opts, opt_args = getopt.getopt(argvs[1:], "Vhne:f:",
-                                           ["version", "help", "quiet", "expression=", "file="])
+            opts, opt_args = getopt.getopt(argvs[1:], "Vhni:e:f:",
+                                           ["version", "help", "quiet", "suffix=", "expression=", "file="])
         except getopt.GetoptError:
             usage()
             sys.exit(2)
@@ -143,9 +150,9 @@ def main():
         for target_file in opt_args:
             try:
                 lines = open(target_file).readlines()
-                f = open("_" + target_file, 'w')
-            except IOError:
-                print 'file not found'
+                f = open(target_file + queries['-i'], 'w')
+            except IOError, e:
+                print e
                 break
 
             if f:
