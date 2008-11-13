@@ -14,7 +14,6 @@ import getopt
 argvs = sys.argv
 argc = len(argvs)
 
-
 def usage(opt_args=''):
     print "usage : ./sed.py [-e script] [-f script_file] ... [file ...]"
 
@@ -116,6 +115,8 @@ def y_command(command, line):
             line = re.sub(command[1][i], command[2][i], line)
         return line
 
+
+# options
 options = {'-n' : quiet_opt,
            '-e' : expression_opt,
            '-f' : file_opt,
@@ -124,7 +125,6 @@ options = {'-n' : quiet_opt,
            '-h' : usage,
            '--help' : usage
            }
-
 
 #
 # now -n option is not availble
@@ -141,43 +141,46 @@ def main():
             usage()
             sys.exit(2)
 
-        queries = {} # dictionary of replace query
-
         # get options
+        queries = {}
         for o, v in opts:
-            queries[o] = options[o](v)
+            if o == '-e' or o == '-f':
+                if not queries.has_key(o):
+                    queries[o] = []
+                queries[o].append(options[o](v))
+            else:
+                queries[o] = options[o](v)
 
         for target_file in opt_args:
             try:
                 lines = open(target_file).readlines()
-                f = open(target_file + queries['-i'], 'w')
+                
             except IOError, e:
                 print e
-                break
+                print "skip file -> " + target_file
+                continue
 
-            if f:
-                replace_queries = []
-                # put together options
-                if queries.has_key('-e'):
-                    replace_queries.append(queries['-e'])
-                if queries.has_key('-f'):
-                    for q in queries['-f']:
+            replace_queries = []
+            # put together options
+            for c in ['-e', '-f']:
+                if queries.has_key(c):
+                    for q in queries[c]:
                         replace_queries.append(q)
 
-                for line in lines:
-                    for q in replace_queries:
-                        if q[0] == 's':
-                            line = s_command(q, line)
-                        elif q[0] == 'y':
-                            line = y_command(q, line)
+            f = False
+            if queries.has_key('-i'):
+                f = open(target_file + queries['-i'], 'w')
+            for line in lines:
+                for q in replace_queries:
+                    if q[0] == 's':
+                        line = s_command(q, line)
+                    elif q[0] == 'y':
+                        line = y_command(q, line)
+                
+                print line,
+                if f:
                     f.write(line)
-                    print line,
-
-                f.close()
-
-            else:
-                print 'file not found'
-
+            f.close()
 
 
 if __name__ == '__main__':
