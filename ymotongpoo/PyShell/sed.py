@@ -1,5 +1,5 @@
 #!/usr/bin/python
-# -*- coding : euc-jp -*-
+# -*- encoding: euc-jp; coding : euc-jp -*-
 """
 @file : sed.py
 @auther : ymotongpoo
@@ -128,8 +128,8 @@ options = {'-n' : quiet_opt,
 
 #
 # now -n option is not availble
-# 
-# 
+#
+#
 def main():
     if argc < 3:
         sys.exit()
@@ -154,7 +154,7 @@ def main():
         for target_file in opt_args:
             try:
                 lines = open(target_file).readlines()
-                
+
             except IOError, e:
                 print e
                 print "skip file -> " + target_file
@@ -176,7 +176,7 @@ def main():
                         line = s_command(q, line)
                     elif q[0] == 'y':
                         line = y_command(q, line)
-                
+
                 print line,
                 if f:
                     f.write(line)
