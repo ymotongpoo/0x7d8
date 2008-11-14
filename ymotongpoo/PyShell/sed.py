@@ -1,10 +1,21 @@
 #!/usr/bin/python
 # -*- encoding: euc-jp; coding : euc-jp -*-
 """
-@file : sed.py
-@auther : ymotongpoo
-@date : 2008.10.27
+PyShell No.1  sed
+
+sed.py is an linux comoand \"sed\" like script implemented in Python.
+this script mainly focused on just replacing
+strings using regular expressions.
+
+Known issue:
+    - always act with 'g' option without it.
+    - any commands but for 's' and 'g' do not work
 """
+
+__author__ = "ymotongpoo <ymotongpoo@gmail.com>"
+__date__   = "13 Nov. 2008"
+__credits__ = "0x7d8 -- programming training"
+__version__ = "$Revision: 0.10"
 
 import sys
 import os
@@ -63,10 +74,18 @@ def parse_query(query):
 # functions for options
 ####################################
 def expression_opt(opt_arg):
+    """
+    function for '-e' option.
+    just parse command query.
+    """
     return parse_query(opt_arg)
 
 
 def file_opt(opt_arg):
+    """
+    function for '-f' option
+    read files and pick up and parse commands
+    """
     queries = []
 
     try:
@@ -82,28 +101,37 @@ def file_opt(opt_arg):
 
 
 def version_opt(opt_arg=''):
+    """
+    show version infomation
+    """
     print "sed.py -- version 0.10"
     sys.exit()
 
 
 def suffix_opt(opt_arg=''):
+    """
+    return suffix for backup file
+    """
     suffix = ''
     if len(opt_arg) != 0:
         suffix = '.' + opt_arg
     return suffix
-
-def quiet_opt(opt_arg=''):
-    # dummy
-    sys.exit()
 
 
 ####################################
 # process for each command in -e
 ####################################
 def s_command(command, line):
+    """
+    function for 's/foo/bar/' command
+    in this version, it's not dependent on 'g' command
+    """
     return re.sub(command[1], command[2], line)
 
 def y_command(command, line):
+    """
+    function for 'y///' command
+    """
     if len(command[1]) != len(command[2]):
         print "transform string are not the same length"
         sys.exit(1)
@@ -117,8 +145,7 @@ def y_command(command, line):
 
 
 # options
-options = {'-n' : quiet_opt,
-           '-e' : expression_opt,
+options = {'-e' : expression_opt,
            '-f' : file_opt,
            '-V' : version_opt,
            '-i' : suffix_opt,
@@ -127,7 +154,7 @@ options = {'-n' : quiet_opt,
            }
 
 #
-# now -n option is not availble
+#
 #
 #
 def main():
