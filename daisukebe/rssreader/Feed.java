@@ -7,10 +7,8 @@ import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.feed.synd.SyndContent;
 import com.sun.syndication.fetcher.FeedFetcher;
 import com.sun.syndication.fetcher.impl.HttpURLFeedFetcher;
-/**
- * CSVの入出力部分はOkachanが、クラスの実装と全体はdaisukebeが
- *
-*/
+
+
 public class Feed {
 
 	static String address = null;
