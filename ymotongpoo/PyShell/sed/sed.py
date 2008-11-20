@@ -158,7 +158,7 @@ options = {'-e' : expression_opt,
 #
 #
 def main():
-    if argc < 3:
+    if argc < 2:
         sys.exit()
     else:
         try:
@@ -172,7 +172,7 @@ def main():
         queries = {}
         for o, v in opts:
             if o == '-e' or o == '-f':
-                if not queries.has_key(o):
+                if not o in queries:
                     queries[o] = []
                 queries[o].append(options[o](v))
             else:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- encoding: utf-8; coding : utf-8 -*-
 """
 PyShell No.2  head
@@ -58,18 +58,18 @@ def main():
             #else:
             #    lines = open(fn).readlines()
             #
-            
+
             f = open(fn)
             if bytes > 0:
                 data = f.read(bytes)
             else:
                 data = f.read()
             lines = data.split('\n')
-            
+
         except:
             print '\nskip file : ' + fn
             continue
-        
+
         if '--verbose' in options \
                or (not '-q' in options and not '--quiet' in options and not '--silent' in options):
             print '==> ' + fn + ' <=='
@@ -77,8 +77,8 @@ def main():
         line_num = line_num if (line_num < len(lines)) else len(lines)
         for i in range(0, line_num):
             print lines[i]
-    
+
 
 if __name__ == '__main__':
     main()
-    
+
