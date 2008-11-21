@@ -1,4 +1,4 @@
-﻿# -*- encoding: utf-8 -*-;
+# -*- encoding: utf-8 -*-;
 """
 feed.py
 
@@ -20,9 +20,28 @@ class FeedParser:
         self.body = body
         self.parser = xml.parsers.expat.ParserCreate()
 
-    def GetRssType(body):
+    def GetRssType(self, body = ''):
         p = xml.parsers.expat.ParserCreate()
-        pass
+        
+        def start_element(name, attrs):
+            if name == 'rdf:RDF':
+                print attrs
+
+        def end_element(name):
+            if name == 'rdf:RDF':
+                print 'end'
+
+        def char_data(data):
+            pass
+
+        p.StartElementHandler = start_element
+        p.EndElementHandler = end_element
+        p.CharacterDataHandler = char_data
+        
+        if len(body) == 0:
+            p.Parse(self.body)
+        else:
+            p.Parse(body)
 
     def do_parsing(self):
         r = RSS10Handlers
@@ -40,7 +59,7 @@ class FeedHandlers:
     @classmethod
     def state_element(name, attrs):
         if name == 'rss':
-            if 'version' in attrs and attrs['version'] == 2.o:
+            if 'version' in attrs and attrs['version'] == '2.0':
                 return RSS20Handler()
                 
 
