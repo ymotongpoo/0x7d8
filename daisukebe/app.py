@@ -199,6 +199,8 @@ class getFeed(grok.View):
         connection.close()
         db.close()
 
+"""
+# this method is not called
 
     def getUrl(self):
         url = []
@@ -222,7 +224,7 @@ class getFeed(grok.View):
         
         return url
 
-
+"""
     def feed(self):
         urllist = []
         urllist = self.getUrl2()
