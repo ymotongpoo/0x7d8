@@ -41,7 +41,7 @@ class getPhotos(grok.View):
 
     def default(self):
         args = {'method' : 'flickr.photos.search',
-                'api_key' : '58abc315168ff0008467f003e2d28b04',
+                'api_key' : 'APIKEY',
                 'per_page' : '50',
                 'sort' : 'date-posted-desc',
                 'format' : 'json',
