@@ -5,6 +5,10 @@ WSSE.py
 WSSEAtomClinet:
     http://d.hatena.ne.jp/keyword/%A4%CF%A4%C6%A4%CA%A5%D5%A5%A9%A5%C8%A5%E9%A5%A4%A5%D5AtomAPI?kid=88110
     http://d.hatena.ne.jp/kenkitii/20060429/p1
+
+Known issue:
+    - getUpdate()
+      'uri' elements cannot be get
 """
 
 __author__="ymotongpoo <ymotongpoo@gmail.com>"
@@ -18,7 +22,17 @@ import urllib,httplib
 from xml.dom import minidom
 
 class WSSEAtomClient:
+    """
+    class for WSSE authorized Atom Client
+    """
     def __init__(self, userid='', password=''):
+        """
+        initialize class
+
+        arguments:
+            userid : user id for web service
+            password : password for web service
+        """
         self.userid = userid
         self.password = password
         self.useragent = 'WSSEAtomClient'
@@ -26,6 +40,10 @@ class WSSEAtomClient:
 
 
     def createHeaderToken(self):
+        """
+        create header informations for WSSE authorization.
+        this is used for X-WSSE property in HTTP request
+        """
         nonce = sha.sha(str(time.time() + random.random())).digest()
         nonce64 = base64.encodestring(nonce).strip()
 
@@ -41,6 +59,18 @@ class WSSEAtomClient:
 
 
     def atomRequest(self, method, endpoint, body, content_type):
+        """
+        send HTTP request using WSSE header information
+
+        arguments:
+            method : method type of HTTP request (GET/POST/PUT/DELETE)
+            endpoint : URL of service end point
+            body : body of HTTP request
+            content_type : content type of HTTP request like 'text/html'
+
+        return:
+            dictionary of HTTP status, reason of the status and HTTP body
+        """
         header_info = {'X-WSSE': self.wsse,
                        'Content-Type': content_type,
                        'Authorization': 'WSSE profile="UsernameToken"',
@@ -53,10 +83,8 @@ class WSSEAtomClient:
         conn = httplib.HTTPConnection(connhostinfo[0])
         conn.request(method, connhostinfo[1], body, header_info)
         r = conn.getresponse()
-        """
-        if r.status != 200:
+        if r.status in [200, 201]:
             raise Exception('login failure')
-        """
         response = dict(status = r.status,
                         reason = r.reason,
                         data = r.read())
@@ -65,6 +93,15 @@ class WSSEAtomClient:
 
 
     def getCollection(self, data):
+        """
+        get service URL from HTTP response
+
+        arguments:
+            data : HTTP body
+
+        return :
+            list of URL and title of each web service
+        """
         element_hierarchy = ['workspace', 'collection']
         doc = minidom.parseString(data).getElementsByTagName('workspace').item(0)
         
@@ -80,21 +117,63 @@ class WSSEAtomClient:
         return service
 
 
+
 class MixiClient(WSSEAtomClient):
+    """
+    class for mixi API (unofficial)
+    """
     def __init__(self, userid, password):
+        """
+        arguments:
+            userid : user id for mixi (i.e. email address)
+            password : password for mixi
+        """
         WSSEAtomClient.__init__(self, userid, password)
 
+
     def __getService(self, endpoint, body='', content_type='text/xml'):
+        """
+        send HTTP reqest using GET method with WSSE header
+        
+        arguments:
+            endpoint : service endpoint
+            body : body for HTTP request
+            content_type : content type of HTTP
+        """
         self.createHeaderToken()        
         r = self.atomRequest('GET', endpoint, body, content_type)
         return r
 
+
     def __postService(self, endpoint, body, content_type='text/xml'):
+        """
+        send HTTP reqest using POSt method with WSSE header
+        
+        arguments:
+            endpoint : service endpoint
+            body : body for HTTP request
+            content_type : content type of HTTP
+
+        return:
+            HTTP response
+        """
         self.createHeaderToken()
         r = self.atomRequest('POST', endpoint, body, content_type)
         return r
 
+
     def __createSenderXML(self, elem_dict):
+        """
+        create XML body for HTTP request
+        
+        arguments:
+            elem_dict : dictionary for XML elements.
+                        key are element names.
+                        values are contents of elements.
+
+        return:
+            XML string for HTTP request
+        """
         impl = minidom.getDOMImplementation()
         doc = impl.createDocument(None, 'entry', None)
 
@@ -114,6 +193,15 @@ class MixiClient(WSSEAtomClient):
 
 
     def getTracks(self):
+        """
+        get lataset foot stamps
+
+        return:
+            dictionary of lastest foot stamps.
+            name -- user name
+            link -- url of each user
+            updated -- time stamp of foot stamp
+        """
         d = self.__getService('http://mixi.jp/atom/tracks')
         service = self.getCollection(d['data'])[0]['url']
 
@@ -137,6 +225,15 @@ class MixiClient(WSSEAtomClient):
 
 
     def getNotify(self):
+        """
+        get notifies
+
+        return:
+            dicionary of latest notifies.
+            title -- title of notify
+            link -- link for the notify
+            updated -- time stamp of notify
+        """
         d = self.__getService('http://mixi.jp/atom/notify')
         service = self.getCollection(d['data'])[0]['url']
 
@@ -159,6 +256,16 @@ class MixiClient(WSSEAtomClient):
 
 
     def getFriends(self):
+        """
+        get my mixi friends list
+
+        return:
+            dictionary of friends list
+            name : name of friend
+            link : url of each friend profile
+            updated : last login
+            group : list of assigned group
+        """
         d = self.__getService('http://mixi.jp/atom/friends')
         service = self.getCollection(d['data'])[0]['url']
 
@@ -187,6 +294,14 @@ class MixiClient(WSSEAtomClient):
     def getUpdates(self):
         """
         something is wrong with 'uri' element.
+
+        return:
+            dictionary of activity updates of friends
+            name -- name of friends
+            title -- activity content
+            link -- link for activity
+            updated -- time stamp of activity
+            label -- category of activity
         """
         d = self.__getService('http://mixi.jp/atom/updates')
         service = self.getCollection(d['data'])[0]['url']
@@ -216,12 +331,26 @@ class MixiClient(WSSEAtomClient):
         
 
     def getPhotoService(self):
+        """
+        return:
+            HTTP response of photo album list
+        """
         d = self.__getService('http://photo.mixi.jp/atom/r=3')
         service = self.getCollection(d['data'])
         return service
 
 
     def createAlbum(self, title, summary):
+        """
+        create brand new photo album
+
+        arguments:
+            title : title of photo album
+            summary : summary of photo album
+
+        return:
+            edit URL of created photo album
+        """
         for s in self.getPhotoService():
             if s['title'] == 'photo album':
                 url = s['url']
@@ -242,6 +371,16 @@ class MixiClient(WSSEAtomClient):
 
 
     def postPicsToAlbum(self, pics, url):
+        """
+        upload pictures to specified photo album
+
+        arguments:
+            pics : list of filenames of pics
+            url : service url of objective photo album
+
+        return:
+            result response of post request
+        """
         for pic in pics:
             try:
                 p = open(pic, 'rb').read()
@@ -251,29 +390,42 @@ class MixiClient(WSSEAtomClient):
         return d
 
 
-    def postDiary(self, title, summary, pic):
+    def postDiary(self, title, summary, pic=''):
         """
-        dict should be in this order
+        post new diary.
+
+        variables:
+            title : title of a new entry on diary
+            summary : body of a new entry
+            pic : filename of picture
+
+        return:
+            result of post reqest
+
+        causion:
+            dict should be in this order
         """
         d = self.__getService('http://mixi.jp/atom/diary')
         service = self.getCollection(d['data'])[0]['url']
-        pics = [pic]
-        d = self.postPicsToAlbum(pics, service)
+        if len(pic) > 0:
+            pics = [pic]
+            d = self.postPicsToAlbum(pics, service)
 
-        # get edit uri
-        edituri = ''
-        doc = minidom.parseString(d['data'])
-        urls = doc.getElementsByTagName('entry').item(0).getElementsByTagName('link')
-        for l in urls:
-            if 'edit' == l.getAttribute('rel'):
-                edituri = l.getAttribute('href')
+            # get edit uri
+            service = ''
+            doc = minidom.parseString(d['data'])
+            urls = doc.getElementsByTagName('entry').item(0).getElementsByTagName('link')
+            for l in urls:
+                if 'edit' == l.getAttribute('rel'):
+                    service = l.getAttribute('href')
 
-        if len(edituri) > 0:
+        if len(service) > 0:
             elem_dict = dict(summary = summary,
                              title = title)
                          
             body = self.__createSenderXML(elem_dict)
-            d = self.__postService(edituri, body)
+            d = self.__postService(service, body)
             return d
-        elif len(edituri) == 0:
+
+        elif len(service) == 0:
             raise 'URI Error'
