@@ -21,6 +21,7 @@ import base64, sha
 import urllib,httplib
 from xml.dom import minidom
 
+
 class WSSEAtomClient:
     """
     class for WSSE authorized Atom Client
