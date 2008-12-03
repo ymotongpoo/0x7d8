@@ -1,4 +1,4 @@
-# -*- encoding: utf-8 -*-;
+﻿# -*- encoding: utf-8 -*-;
 """
 feed.py
 
@@ -19,10 +19,16 @@ import time
 import sys
 
 class Feed:
+    """
+    class for parsing RSS/Atom feed
+    """
     def __init__(self, urlfile = [], urllist = []):
         """
-        urlfile - list of files which has list of URLs
-        urllist - list of URLs
+        initialization
+
+        arguments:
+            urlfile : list of files which has list of URLs
+            urllist : list of URLs
         """
         self.urlfile = urlfile
         self.urllist = urllist
@@ -37,10 +43,13 @@ class Feed:
             except:
                 print 'skipped file: ', f
 
-    
+
     def GetFeed(self, extraurls = []):
         """
-        extraurls - list of urls
+        get RSS/Atom feeds of self.urllist
+
+        arguments:
+            extraurls : list of urls
         """
         self.urllist.extend(extraurls)
         for u in self.urllist:
@@ -49,11 +58,14 @@ class Feed:
             except Exception, e:
                 sys.exc_info()[0]
                 sys.exc_info()[1]
-                
+
 
     def MailBodyText(self):
         """
-        returns formatted text of feeds
+        mail body for text mail
+
+        return:
+            formatted text of feeds
         """
         self.mailbody = '*** Feed on ' + time.strftime("%Y-%m-%d %H:%M:%S") + '***\n'
         for f in self.feedlist:
@@ -68,7 +80,10 @@ class Feed:
 
     def MailBodyHTML(self):
         """
-        returns HTML of feeds
+        under implementation
+
+        return:
+            HTML of feeds
         """
         for f in self.feedlist:
             f.feed.title.encode('utf-8')
@@ -76,4 +91,4 @@ class Feed:
                 print '-'*20
                 print e.title.encode('utf-8')
                 print e.date.encode('utf-8')
-                
+

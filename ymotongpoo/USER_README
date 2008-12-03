@@ -37,3 +37,11 @@ Pythonの練習のためにShellコマンドをPythonで実装してみる
 2. RSSReader
 完全にdaisukebeに触発されての思いつきで始めました。
 出力先は同じくメールで。
+
+3. APIs
+いろいろなAPIを利用するPythonラッパをコツコツつくってます。
+今のところ書いているのは下記。
+- はてなブックマーク
+- はてなハイク（Twitter APIの実装部分終了）
+- mixi (WSSE認証を用いたAtom API用のクラスも）
+
