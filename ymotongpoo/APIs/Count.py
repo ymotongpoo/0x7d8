@@ -1,10 +1,9 @@
-# -*- encoding: utf-8 -*-
+﻿# -*- encoding: utf-8 -*-
 """
 Count.py
 
-Known issue:
-    - getUpdate()
-      'uri' elements cannot be get
+Referrence:
+    http://python.matrix.jp/tips/string/encoding.html#shift-jis
 """
 
 __author__="ymotongpoo <ymotongpoo@gmail.com>"
@@ -23,11 +22,12 @@ def searchCounterSuffix(key, encoding, proxies={}):
                      select = 50)
     params = urllib.urlencode(get_dict)
     if 'http' in proxies:
-        f = urllib.urlopen(SITE_URL + '?' + params, proxies)
+        print proxies
+        f = urllib.urlopen(SITE_URL + '?' + params, proxies=proxies)
     else:
         f = urllib.urlopen(SITE_URL + '?' + params)
 
-    print f.read().encode('shift_jis')
+    print f.read().decode(encoding)
 
 
 def extractResult(body):
@@ -36,8 +36,10 @@ def extractResult(body):
 
 def main():
     key = u'帽子'
-    encoding = 'shift_jis'
-    searchCounterSuffix(key, encoding)
+    encoding = 'cp932'
+    #searchCounterSuffix(key, encoding)
+    proxies = {'http':'http://proxy.example.com:80'}
+    searchCounterSuffix(key, encoding, proxies)
 
 
 if __name__ == '__main__':
