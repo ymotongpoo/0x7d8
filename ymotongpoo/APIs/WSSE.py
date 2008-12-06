@@ -84,7 +84,8 @@ class WSSEAtomClient:
         conn = httplib.HTTPConnection(connhostinfo[0])
         conn.request(method, connhostinfo[1], body, header_info)
         r = conn.getresponse()
-        if r.status in [200, 201]:
+        if not r.status in [200, 201]:
+            print r.status, r.reason
             raise Exception('login failure')
         response = dict(status = r.status,
                         reason = r.reason,
@@ -123,6 +124,8 @@ class MixiClient(WSSEAtomClient):
     """
     class for mixi API (unofficial)
     """
+    mixi_ib_codec = 'euc-jp'
+    mixi_ob_codec = 'utf-8'
     def __init__(self, userid, password):
         """
         arguments:
@@ -187,7 +190,7 @@ class MixiClient(WSSEAtomClient):
             elem.appendChild(doc.createTextNode(v))
             header.appendChild(elem)
 
-        body = doc.toxml(encoding='UTF-8')
+        body = doc.toxml()
         doc.unlink()
             
         return body
@@ -206,7 +209,7 @@ class MixiClient(WSSEAtomClient):
         d = self.__getService('http://mixi.jp/atom/tracks')
         service = self.getCollection(d['data'])[0]['url']
 
-        d = self.atomRequest('GET',service,'')
+        d = self.atomRequest('GET',service,'','')
         doc = minidom.parseString(d['data'])
         
         tracks = []
@@ -217,7 +220,7 @@ class MixiClient(WSSEAtomClient):
             updated = n.getElementsByTagName('updated').item(0).childNodes[0].data
             
             tracks.append(
-                dict(name = name,
+                dict(name = name.encode(self.mixi_ib_codec),
                      link = link,
                      updated = updated)
                 )
@@ -248,7 +251,7 @@ class MixiClient(WSSEAtomClient):
             updated = n.getElementsByTagName('updated').item(0).childNodes[0].data
             
             notify.append(
-                dict(title = title,
+                dict(title = title.encode(self.mixi_ib_codec),
                      link = link,
                      updated = updated)
                 )
@@ -281,10 +284,11 @@ class MixiClient(WSSEAtomClient):
 
             group = []
             for item in n.getElementsByTagName('category'):
-                group.append(item.getAttribute('label'))
+                label = item.getAttribute('label')
+                group.append(label.encode(self.mixi_ib_codec))
             
             friends.append(
-                dict(name = name,
+                dict(name = name.encode(self.mixi_ib_codec),
                      link = link,
                      updated = updated,
                      group = group)
@@ -323,10 +327,10 @@ class MixiClient(WSSEAtomClient):
             updates.append(
                 dict(name = name,
                      #uri = uri,
-                     title = title,
+                     title = title.encode(self.mixi_ib_codec),
                      link = link,
                      updated = updated,
-                     label = label)
+                     label = label.encode(self.mixi_ib_codec))
                 )
         return updates
         
@@ -356,8 +360,8 @@ class MixiClient(WSSEAtomClient):
             if s['title'] == 'photo album':
                 url = s['url']
 
-        elem_dict = dict(title = title,
-                         summary = summary,
+        elem_dict = dict(title = title.encode(self.mixi_ob_codec),
+                         summary = summary.encode(self.mixi_ob_codec),
                          content = '')
         body = self.__createSenderXML(elem_dict)
         d = self.__postService(url, body)
@@ -419,10 +423,10 @@ class MixiClient(WSSEAtomClient):
             for l in urls:
                 if 'edit' == l.getAttribute('rel'):
                     service = l.getAttribute('href')
-
+                    
         if len(service) > 0:
-            elem_dict = dict(summary = summary,
-                             title = title)
+            elem_dict = dict(summary = summary.encode(self.mixi_ob_codec),
+                             title = title.encode(self.mixi_ob_codec))
                          
             body = self.__createSenderXML(elem_dict)
             d = self.__postService(service, body)
