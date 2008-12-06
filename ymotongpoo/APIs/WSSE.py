@@ -124,8 +124,7 @@ class MixiClient(WSSEAtomClient):
     """
     class for mixi API (unofficial)
     """
-    mixi_ib_codec = 'euc-jp'
-    mixi_ob_codec = 'utf-8'
+    mixi_codec = 'utf-8'
     def __init__(self, userid, password):
         """
         arguments:
@@ -220,7 +219,7 @@ class MixiClient(WSSEAtomClient):
             updated = n.getElementsByTagName('updated').item(0).childNodes[0].data
             
             tracks.append(
-                dict(name = name.encode(self.mixi_ib_codec),
+                dict(name = name.decode(self.mixi_codec),
                      link = link,
                      updated = updated)
                 )
@@ -251,7 +250,7 @@ class MixiClient(WSSEAtomClient):
             updated = n.getElementsByTagName('updated').item(0).childNodes[0].data
             
             notify.append(
-                dict(title = title.encode(self.mixi_ib_codec),
+                dict(title = title.decode(self.mixi_codec),
                      link = link,
                      updated = updated)
                 )
@@ -285,10 +284,10 @@ class MixiClient(WSSEAtomClient):
             group = []
             for item in n.getElementsByTagName('category'):
                 label = item.getAttribute('label')
-                group.append(label.encode(self.mixi_ib_codec))
+                group.append(label.dncode(self.mixi_codec))
             
             friends.append(
-                dict(name = name.encode(self.mixi_ib_codec),
+                dict(name = name.dncode(self.mixi_codec),
                      link = link,
                      updated = updated,
                      group = group)
@@ -327,10 +326,10 @@ class MixiClient(WSSEAtomClient):
             updates.append(
                 dict(name = name,
                      #uri = uri,
-                     title = title.encode(self.mixi_ib_codec),
+                     title = title.dncode(self.mixi_codec),
                      link = link,
                      updated = updated,
-                     label = label.encode(self.mixi_ib_codec))
+                     label = label.dncode(self.mixi_codec))
                 )
         return updates
         
@@ -360,8 +359,8 @@ class MixiClient(WSSEAtomClient):
             if s['title'] == 'photo album':
                 url = s['url']
 
-        elem_dict = dict(title = title.encode(self.mixi_ob_codec),
-                         summary = summary.encode(self.mixi_ob_codec),
+        elem_dict = dict(title = title.encode(self.mixi_codec),
+                         summary = summary.encode(self.mixi_codec),
                          content = '')
         body = self.__createSenderXML(elem_dict)
         d = self.__postService(url, body)
@@ -425,8 +424,8 @@ class MixiClient(WSSEAtomClient):
                     service = l.getAttribute('href')
                     
         if len(service) > 0:
-            elem_dict = dict(summary = summary.encode(self.mixi_ob_codec),
-                             title = title.encode(self.mixi_ob_codec))
+            elem_dict = dict(summary = summary.encode(self.mixi_codec),
+                             title = title.encode(self.mixi_codec))
                          
             body = self.__createSenderXML(elem_dict)
             d = self.__postService(service, body)
