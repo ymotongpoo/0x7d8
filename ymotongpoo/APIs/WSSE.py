@@ -69,7 +69,7 @@ class WSSEAtomClient:
             body : body of HTTP request
             content_type : content type of HTTP request like 'text/html'
 
-        return:
+        returns:
             dictionary of HTTP status, reason of the status and HTTP body
         """
         header_info = {'X-WSSE': self.wsse,
@@ -101,11 +101,11 @@ class WSSEAtomClient:
         arguments:
             data : HTTP body
 
-        return :
+        returns:
             list of URL and title of each web service
         """
         element_hierarchy = ['workspace', 'collection']
-        doc = minidom.parseString(data).getElementsByTagName('workspace').item(0)
+        doc = minidom.parseString(data.lstrip()).getElementsByTagName('workspace').item(0)
         
         service = []
         for n in doc.getElementsByTagName('collection'):
@@ -157,7 +157,7 @@ class MixiClient(WSSEAtomClient):
             body : body for HTTP request
             content_type : content type of HTTP
 
-        return:
+        returns:
             HTTP response
         """
         self.createHeaderToken()
@@ -174,7 +174,7 @@ class MixiClient(WSSEAtomClient):
                         key are element names.
                         values are contents of elements.
 
-        return:
+        returns:
             XML string for HTTP request
         """
         impl = minidom.getDOMImplementation()
@@ -199,7 +199,7 @@ class MixiClient(WSSEAtomClient):
         """
         get lataset foot stamps
 
-        return:
+        returns:
             dictionary of lastest foot stamps.
             name -- user name
             link -- url of each user
@@ -209,7 +209,7 @@ class MixiClient(WSSEAtomClient):
         service = self.getCollection(d['data'])[0]['url']
 
         d = self.atomRequest('GET',service,'','')
-        doc = minidom.parseString(d['data'])
+        doc = minidom.parseString(d['data'].lstrip())
         
         tracks = []
         for n in doc.getElementsByTagName('entry'):
@@ -231,7 +231,7 @@ class MixiClient(WSSEAtomClient):
         """
         get notifies
 
-        return:
+        returns:
             dicionary of latest notifies.
             title -- title of notify
             link -- link for the notify
@@ -241,7 +241,7 @@ class MixiClient(WSSEAtomClient):
         service = self.getCollection(d['data'])[0]['url']
 
         d = self.__getService(service)
-        doc = minidom.parseString(d['data'])
+        doc = minidom.parseString(d['data'].lstrip())
         
         notify = []
         for n in doc.getElementsByTagName('entry'):
@@ -262,7 +262,7 @@ class MixiClient(WSSEAtomClient):
         """
         get my mixi friends list
 
-        return:
+        returns:
             dictionary of friends list
             name : name of friend
             link : url of each friend profile
@@ -273,7 +273,7 @@ class MixiClient(WSSEAtomClient):
         service = self.getCollection(d['data'])[0]['url']
 
         d = self.__getService(service)
-        doc = minidom.parseString(d['data'])
+        doc = minidom.parseString(d['data'].lstrip())
         
         friends = []
         for n in doc.getElementsByTagName('entry'):
@@ -299,7 +299,7 @@ class MixiClient(WSSEAtomClient):
         """
         something is wrong with 'uri' element.
 
-        return:
+        returns:
             dictionary of activity updates of friends
             name -- name of friends
             title -- activity content
@@ -311,7 +311,7 @@ class MixiClient(WSSEAtomClient):
         service = self.getCollection(d['data'])[0]['url']
 
         d = self.__getService(service)
-        doc = minidom.parseString(d['data'])
+        doc = minidom.parseString(d['data'].lstrip())
         
         updates = []
         for n in doc.getElementsByTagName('entry'):
@@ -326,17 +326,17 @@ class MixiClient(WSSEAtomClient):
             updates.append(
                 dict(name = name,
                      #uri = uri,
-                     title = title.dncode(self.mixi_codec),
+                     title = title.decode(self.mixi_codec),
                      link = link,
                      updated = updated,
-                     label = label.dncode(self.mixi_codec))
+                     label = label.decode(self.mixi_codec))
                 )
         return updates
         
 
     def getPhotoService(self):
         """
-        return:
+        returns:
             HTTP response of photo album list
         """
         d = self.__getService('http://photo.mixi.jp/atom/r=3')
@@ -352,7 +352,7 @@ class MixiClient(WSSEAtomClient):
             title : title of photo album
             summary : summary of photo album
 
-        return:
+        returns:
             edit URL of created photo album
         """
         for s in self.getPhotoService():
@@ -382,7 +382,7 @@ class MixiClient(WSSEAtomClient):
             pics : list of filenames of pics
             url : service url of objective photo album
 
-        return:
+        returns:
             result response of post request
         """
         for pic in pics:
@@ -403,10 +403,10 @@ class MixiClient(WSSEAtomClient):
             summary : body of a new entry
             pic : filename of picture
 
-        return:
+        returns:
             result of post reqest
 
-        causion:
+        caution:
             dict should be in this order
         """
         d = self.__getService('http://mixi.jp/atom/diary')
@@ -433,3 +433,132 @@ class MixiClient(WSSEAtomClient):
 
         elif len(service) == 0:
             raise 'URI Error'
+
+
+class HatenaBookmarkClient(WSSEAtomClient):
+    root_endpoint = 'http://b.hatena.ne.jp/atom'
+    service_uri = {'posturi':'', 'feeduri':''}
+    
+    def __init__(self, userid, password):
+        WSSEAtomClient.__init__(self, userid, password)
+
+
+    def __extractURIs(self, entrynode):
+        links = entrynode.getElementsByTagName('link')
+        edituri = ''
+        title = ''
+        refuri = ''
+        for l in links:
+            if 'service.edit' == l.getAttribute('rel'):
+                edituri = l.getAttribute('href')
+                title = l.getAttribute('title')
+            elif 'related' == l.getAttribute('rel'):
+                refuri = l.getAttribute('href')
+
+        return dict(edituri = edituri,
+                    title = title,
+                    refuri = refuri)
+        
+
+    def __createSenderXML(self, url='', summary=u'', title=u''):
+        impl = minidom.getDOMImplementation()
+        doc = impl.createDocument(None, 'entry', None)
+        header = doc.documentElement
+        header.attributes['xmlns'] = 'http://purl.org/atom/ns#'
+
+        if len(url) > 0:
+            elem = doc.createElement('link')
+            elem.setAttribute('rel', 'related')
+            elem.setAttribute('type', 'text/html')
+            elem.setAttribute('href', url)
+            header.appendChild(elem)
+
+        if len(summary) > 0:
+            elem = doc.createElement('summary')
+            elem.setAttribute('type', 'text/plain')
+            elem.appendChild(doc.createTextNode(summary))
+            header.appendChild(elem)
+
+        if len(title) > 0:
+            elem = doc.createElement('title')
+            elem.appendChild(doc.createTextNode(title))
+            header.appendChild(elem)
+
+        body = doc.toxml(encoding='UTF-8')
+        doc.unlink()
+        return body
+    
+
+    def getServiceURI(self):
+        """
+        get PostURI and FeedURI
+
+        returns:
+            dictionary of each service URI
+        """
+        self.createHeaderToken()
+        d = self.atomRequest('GET', self.root_endpoint, '', 'text/xml')
+
+        doc = minidom.parseString(d['data'])
+        linkelem = doc.getElementsByTagName('feed').item(0).\
+                   getElementsByTagName('link')
+        
+        posturi = ''
+        feeduri = ''
+        for l in linkelem:
+            if 'service.post' == l.getAttribute('rel'):
+                self.service_uri['posturi'] = l.getAttribute('href')
+            elif 'service.feed' == l.getAttribute('rel'):
+                self.service_uri['feeduri'] = l.getAttribute('href')
+        
+        return self.service_uri
+
+
+    def postBookmark(self, url, summary=u''):
+        body = self.__createSenderXML(url, summary, '')
+
+        self.createHeaderToken()
+        d = self.atomRequest('POST', self.service_uri['posturi'], body, 'text/xml')
+
+        doc = minidom.parseString(d['data'].lstrip())
+        entry = doc.getElementsByTagName('entry').item(0)
+        return self.__extractURIs(entry)
+            
+
+    def getFeed(self):
+        self.createHeaderToken()
+        d = self.atomRequest('GET', self.service_uri['feeduri'], '', 'text/xml')
+
+        doc = minidom.parseString(d['data'].lstrip())
+        feed = []
+        for e in doc.getElementsByTagName('entry'):
+            feed.append(self.__extractURIs(e))
+            
+        return feed
+
+
+    def getBookmarkInfo(self, edituri):
+        self.createHeaderToken()
+        d = self.atomRequest('GET', edituri, '', 'text/xml')
+
+        doc = minidom.parseString(d['data'].lstrip())
+        
+
+
+    def editBookmark(self, edituri, title=u'', summary=u''):
+        if len(summary) != 0 or len(title) != 0:
+            body = self.__createSenderXML(title=title, summary=summary)
+            self.createHeaderToken()
+            d = self.atomRequest('PUT', edituri, body, 'text/xml')
+
+            return d['data']
+        else:
+            raise Exception('title or summary must be set')
+
+
+    def deleteBookmark(self, edituri):
+        self.createHeaderToken()
+        d = self.atomRequest('DELETE', edituri, '', 'text/xml')
+
+        doc = minidom.parseString(d['data'].lstrip())
+        return d['data']
