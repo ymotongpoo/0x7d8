@@ -12,7 +12,7 @@ conn = sqlite3.connect('bookmark.db')
 cur = conn.cursor()
 
 cur.execute('create table ttag (id int, tag text)')
-cur.execute('create table tbookmark (url text, title text, user int, tag text, primary key(url, tag))')
+cur.execute('create table tbookmark (url text primary key, title text, user int)')
 conn.commit()
 
 
