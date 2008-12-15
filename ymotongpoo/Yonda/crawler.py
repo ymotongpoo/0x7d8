@@ -7,13 +7,15 @@ __version__="$Revision: 0.10"
 __credits__="0x7d8 -- programming training"
 
 import sqlite3
+import os
 from HatenaBookmark import HatenaBookmark
 
 def main():
     hb = HatenaBookmark()
     entries = []
 
-    c = sqlite3.connect('bookmark.db')
+    BASE_DIR = os.path.dirname(__file__)
+    c = sqlite3.connect(os.path.join(BASE_DIR, 'bookmark.db'))
     cur = c.cursor()
 
     cur.execute('select * from ttag')

@@ -1,0 +1,43 @@
+/* encoding: utf-8; mode: css-mode */
+
+a {
+	text-decoration: none;
+}
+
+a img {
+	border: none;
+}
+
+h3 {
+	border: solid;
+    border-width: 0px 0px 1px 6px;
+    padding: 3px;
+    border-color: #ffa500;
+}
+
+div.ranking {
+	border: 0px;
+	width: 900px;
+	margin: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+table {
+	width: 900px;
+	border-collapse: collapse;
+	border: 1px #000000 solid;
+}
+
+td {
+	padding: 2px;
+	border-collapse: collapse;
+	border: 1px #999999 solid;
+}
+
+th {
+	padding: 5px;
+	border-collapse: collapse;
+	border: 1px #999999 solid;
+	white-space: nowrap;
+}
