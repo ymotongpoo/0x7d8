@@ -6,19 +6,30 @@ __version__="$Revision: 0.10"
 __credits__="0x7d8 -- programming training"
 
 
+from mod_python import apache
 import sqlite3
+import os
 from genshi.template import TemplateLoader
 
-conn = sqlite3.connect('bookmark.db')
-cur = conn.cursor()
+BASEPATH = os.path.dirname(__file__)
+DBPATH = os.path.join(BASEPATH, 'bookmark.db')
+TEMPLATEPATH = os.path.join(BASEPATH, 'yonda.tpl')
 
+conn = sqlite3.connect(DBPATH)
+cur = conn.cursor()
+    
 cur.execute('select url, title from tbookmark order by user desc limit 10')
 bookmarks = []
 for row in cur:
     bookmarks.append(dict(url=row[0], title=row[1]))
+    
+    loader = TemplateLoader([BASEPATH])
+    tmpl = loader.load(TEMPLATEPATH)
+    stream = tmpl.generate(bookmarks=bookmarks)
 
-loader = TemplateLoader(['./'])
-tmpl = loader.load('yonda.tpl')
-stream = tmpl.generate(bookmarks=bookmarks)
-print stream.render('html')
+def handler(req):
+    req.content_type = 'text/html'
+    req.send_http_header()
+    req.write(stream.render('html'))
+    return apache.OK
 

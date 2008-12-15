@@ -12,7 +12,6 @@ __credits__="0x7d8 -- programming training"
 
 
 import urllib
-import sqlite3
 from HTMLParser import HTMLParser, HTMLParseError
 
 class ExtractEntryInfo(HTMLParser):
@@ -107,42 +106,3 @@ class HatenaBookmark:
         data = f.readlines()[21:] # magic code for hatena bookmark result
         data = '\r'.join(data)
         return self.__parseResultBody(data)
-        
-
-
-if __name__ == '__main__':
-    hb = HatenaBookmark()
-    entries = []
-
-    c = sqlite3.connect('bookmark.db')
-    cur = c.cursor()
-
-    cur.execute('select * from ttag')
-    taglist = cur.fetchall()
-    print taglist
-
-    for i, tag in taglist:
-        i = 0
-
-        print '-'*8, tag
-        while 1:
-            entries = hb.searchByTag(tag.encode('utf-8'), u'hot', 25*i)
-            if len(entries) == 0:
-                break
-
-            for e in entries:
-                t = (e['url'].encode('utf-8'),)
-                cur.execute('select * from tbookmark where url = ?', t)
-                
-                if len(cur.fetchall()) > 0:
-                    t = (e['url'].encode('utf-8'), e['title'].encode('utf-8'), e['user'], e['url'].encode('utf-8'))
-                    cur.execute('update tbookmark set url = ?, title = ?, user = ? where url = ?', t)
-                else:
-                    t = (e['url'].encode('utf-8'), e['title'].encode('utf-8'), e['user'])
-                    cur.execute('insert into tbookmark values (?,?,?)', t)
-
-                c.commit()
-
-            print 'offset', 25*i
-            i += 1
-
