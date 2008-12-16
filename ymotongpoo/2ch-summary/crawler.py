@@ -14,18 +14,23 @@ def get_site_list():
     sitelist = []
     conn = sqlite3.connect(DATABASE_FILE)
     cur = conn.cursor()
-    cur.execute('select site_id, url, title from tsite')
+    cur.execute('select site_id, feedurl, title, url from tsite')
     for s in cur.fetchall():
         sitelist.append(dict(id=s[0],
-                             url=s[1],
-                             title=s[2]))
+                             feedurl=s[1],
+                             title=s[2],
+                             url=s[3]))
     return sitelist
 
 
 def search_siteid(url, sitelist):
     for s in sitelist:
-        if s['url'].index(url):
+        print url, '-->', s['url']
+        try:
+            s['url'].index(url)
             return s['id']
+        except Exception:
+            continue
 
 
 def get_feed(rsslist):
@@ -67,13 +72,13 @@ mapfeedfunc = {
 def main():
     # get urllist from DB
     sitelist = get_site_list()
-    urllist = []
+    feedurllist = []
     for s in sitelist:
-        urllist.append(s['url'])
+        feedurllist.append(s['feedurl'])
 
     # fetch entry data from web
     entrylist = []
-    for feed in get_feed(urllist):
+    for feed in get_feed(feedurllist):
         feed['feed']['title'].encode(CODING)
 
         portal = rss10feed
