@@ -25,7 +25,6 @@ def get_site_list():
 
 def search_siteid(url, sitelist):
     for s in sitelist:
-        print url, '-->', s['url']
         try:
             s['url'].index(url)
             return s['id']

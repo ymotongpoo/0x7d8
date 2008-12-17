@@ -40,4 +40,24 @@ th {
 	border-collapse: collapse;
 	border: 1px #999999 solid;
 	white-space: nowrap;
+	color: #dddddd;
+	background-color: #555555;
+}
+
+th#updated {
+	width: 80px;
+}
+
+th#user {
+	width: 20px;
+}
+
+th#title {
+	width: 600px;
+}
+
+div.info {
+	border: 0px;
+	width: 900px;
+	margin: 5px;
 }
