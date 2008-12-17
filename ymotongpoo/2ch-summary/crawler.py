@@ -5,6 +5,7 @@ import feedparser
 import sqlite3
 import os
 import time
+from Bookmark import HatenaBookmark
 
 CODING = 'utf-8'
 BASE_DIR = os.path.dirname(__file__)
@@ -93,14 +94,16 @@ def main():
     # insert entry data into DB
     conn = sqlite3.connect(DATABASE_FILE)
     cur = conn.cursor()
+    hb = HatenaBookmark()
     for e in entrylist:
         t = (e['url'],)
         cur.execute('select url from tentry where url = ?', t)
         if len(cur.fetchall()) == 0:
             site_id = search_siteid(e['site']['url'], sitelist)
-            t = (e['url'], e['title'], e['summary'], e['updated'], site_id)
-            cur.execute('insert into tentry (url, title, summary, updated, site_id) '
-                        'values (?, ?, ?, datetime(?), ?)', t)
+            user = hb.getCount(e['url'])
+            t = (e['url'], e['title'], e['summary'], e['updated'], site_id, user)
+            cur.execute('insert into tentry (url, title, summary, updated, site_id, user) '
+                        'values (?, ?, ?, datetime(?), ?, ?)', t)
     conn.commit()
     conn.close()
     
