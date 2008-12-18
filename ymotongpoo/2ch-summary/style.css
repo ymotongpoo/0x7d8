@@ -62,3 +62,7 @@ div.info {
 	margin: 5px;
 	padding-left: 10px;
 }
+
+div.index {
+	font-size: normal;
+}

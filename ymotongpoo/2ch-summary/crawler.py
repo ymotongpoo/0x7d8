@@ -5,11 +5,13 @@ import feedparser
 import sqlite3
 import os
 import time
-from Bookmark import HatenaBookmark
+import xmlrpclib
 
 CODING = 'utf-8'
 BASE_DIR = os.path.dirname(__file__)
 DATABASE_FILE = os.path.join(BASE_DIR, '2ch-summary.db')
+APIURL = "http://b.hatena.ne.jp/xmlrpc"
+server = xmlrpclib.ServerProxy(APIURL)
 
 def get_site_list():
     sitelist = []
@@ -94,14 +96,13 @@ def main():
     # insert entry data into DB
     conn = sqlite3.connect(DATABASE_FILE)
     cur = conn.cursor()
-    hb = HatenaBookmark()
     for e in entrylist:
         t = (e['url'],)
         cur.execute('select url from tentry where url = ?', t)
         if len(cur.fetchall()) == 0:
             site_id = search_siteid(e['site']['url'], sitelist)
-            user = hb.getCount(e['url'])
-            t = (e['url'], e['title'], e['summary'], e['updated'], site_id, user)
+            user = server.bookmark.getCount(e['url'])
+            t = (e['url'], e['title'], e['summary'], e['updated'], site_id, user[e['url']])
             cur.execute('insert into tentry (url, title, summary, updated, site_id, user) '
                         'values (?, ?, ?, datetime(?), ?, ?)', t)
     conn.commit()

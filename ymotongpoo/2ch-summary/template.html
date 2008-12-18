@@ -8,14 +8,24 @@
   <head>
 	<meta name="author" content="ymotongpoo -- http://d.hatena.ne.jp/ymotongpoo/"/>
 	<link rel="stylesheet" href="/2ch-summary/style.css" type="text/css" media="screen"/>
+	<link rel="javascript" href="/2ch-summary/external.js" type="text/javascript" />
 	<title>毒男アンテナ ('A`)</title>
   </head>
   <body>
+	<!-- ヘッダ -->
+	<div class="header">
+	  <a href="/2ch-summary/2ch_feed_reader.py/entry?sort=updated">更新順</a>
+	  |
+	  <a href="/2ch-summary/2ch_feed_reader.py/entry?sort=user">はてブ順</a>
+	</div>
+
 	<div class="ranking">
 	  <h3>最新エントリ</h3>
 	  <!-- インデックス -->
-	  <div class="">
-		<a py:for="i in index" href="${i.link}">${i.num}</a>|
+	  <div class="index">
+		<a href="${navi.prev}">&lt;&lt;PREV</a>
+		<a py:for="i in index" href="${i.link}">${i.num}</a>
+		<a href="${navi.next}">NEXT&gt;&gt;</a>
 	  </div>
 
 	  <!-- エントリ一覧 -->
@@ -28,11 +38,19 @@
 		</tr>
 		<tr py:for="e in entries">
 		  <td>${e.updated}</td>
-		  <td><a href="${e.url}">${e.title}</a></td>
-		  <td><a href="${e.url}"><img src="http://b.hatena.ne.jp/entry/image/small/${e.url}" alt=""/></a></td>
+		  <td><a href="${e.url}" rel="external">${e.title}</a></td>
+		  <td><a href="${e.url}" rel="external"><img src="http://b.hatena.ne.jp/entry/image/small/${e.url}" alt=""/></a></td>
 		  <td><a href="${e.site_url}">${e.site_title}</a></td>
 		</tr>
 	  </table>
+
+	  <!-- インデックス -->
+	  <div class="index">
+		<a href="${navi.prev}">&lt;&lt;PREV</a>
+		<a py:for="i in index" href="${i.link}">${i.num}</a>
+		<a href="${navi.next}">NEXT&gt;&gt;</a>
+	  </div>
+
 	</div>
 
 	<!-- サイトについて -->
