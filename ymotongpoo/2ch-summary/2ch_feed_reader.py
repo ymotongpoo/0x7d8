@@ -5,6 +5,7 @@ from genshi.template import TemplateLoader
 from mod_python import apache
 import urllib
 import time
+from datetime import datetime, timedelta
 import os
 
 CODING = 'utf-8'
@@ -19,6 +20,10 @@ base_query = 'select a.url, a.title, a.summary, a.updated, ' + \
              'from tentry as a inner join tsite as b ' + \
              'on a.site_id = b.site_id'
 
+title = {'updated':u'最新タイトル',
+         'user':u'はてブランキング',
+         'hot':u'直近1週間'}
+
 def entry(req, sort='updated', offset=0):
     conn = sqlite3.connect(DATABASE_FILE)
     cur = conn.cursor()
@@ -27,8 +32,12 @@ def entry(req, sort='updated', offset=0):
     if sort == 'updated':
         query = base_query + ' order by a.updated desc'
     elif sort == 'user':
-        query = base_query + ' order by a.user desc'        
+        query = base_query + ' order by a.user desc'
+    elif sort == 'hot':
+        week_ago = (datetime.utcnow() - timedelta(7)).strftime('%Y-%m-%d %H:%M:%S')
+        query = base_query + " where a.updated > '" + week_ago + "' order by a.user desc"
     else:
+        sort = 'updated'
         query = base_query + ' order by a.updated desc'
         
     query += ' limit ' + str(entry_per_page) + ' offset ' + str(offset)
@@ -37,26 +46,31 @@ def entry(req, sort='updated', offset=0):
     # create index
     for i in range(1,11):
         getdict = dict(sort=sort,
-                       offset=i*entry_per_page)
+                       offset=(i-1)*entry_per_page)
         link_index.append(dict(num=i,
                                link = './entry?' + urllib.urlencode(getdict)))
 
     # create navigator
     navi_index = {}
-    current = int(offset) / entry_per_page * entry_per_page
+    current = int(offset) / entry_per_page + 1 # page number
     prev = (int(offset) / entry_per_page - 1) * entry_per_page
     next = (int(offset) / entry_per_page + 1)*entry_per_page
-    navi_index['current'] = './entry?' + urllib.urlencode(dict(sort=sort,
-                                                               offset=current if current > 0 else 0))
+    navi_index['current'] = current
     navi_index['prev'] = './entry?' + urllib.urlencode(dict(sort=sort,
                                                             offset=prev if prev > 0 else 0))
     navi_index['next'] = './entry?' + urllib.urlencode(dict(sort=sort,
                                                             offset=next if next > 0 else 0))
+    navi_index['title'] = title[sort]
     
    
     entrylist = []
     for row in cur:
-        updated = time.strftime('%m/%d %H:%M',time.strptime(row[3], '%Y-%m-%d %H:%M:%S'))
+        # change UTC to JST
+        st = time.strptime(row[3], '%Y-%m-%d %H:%M:%S')
+        dt = datetime(st.tm_year, st.tm_mon, st.tm_mday, st.tm_hour, st.tm_min, st.tm_sec)
+        jst = dt + timedelta(hours=9)
+        updated = jst.strftime('%m/%d %H:%M')
+        
         e = dict(url=row[0],
                  title=row[1],
                  summary=row[2],
