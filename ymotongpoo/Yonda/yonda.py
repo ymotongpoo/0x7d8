@@ -17,15 +17,24 @@ TEMPLATEPATH = os.path.join(BASEPATH, 'yonda.tpl')
 
 conn = sqlite3.connect(DBPATH)
 cur = conn.cursor()
-    
+
+# popular entry
 cur.execute('select url, title from tbookmark order by user desc limit 10')
 bookmarks = []
 for row in cur:
     bookmarks.append(dict(url=row[0], title=row[1]))
-    
-    loader = TemplateLoader([BASEPATH])
-    tmpl = loader.load(TEMPLATEPATH)
-    stream = tmpl.generate(bookmarks=bookmarks)
+
+# hot entry
+cur.execute('select url, title from tbookmark order by hotpoint desc limit 10')
+hotentry = []
+for row in cur:
+    hotentry.append(dict(url=row[0], title=row[1]))
+
+loader = TemplateLoader([BASEPATH])
+tmpl = loader.load(TEMPLATEPATH)
+stream = tmpl.generate(bookmarks=bookmarks, hotentry=hotentry)
+
+conn.close()
 
 def handler(req):
     req.content_type = 'text/html'

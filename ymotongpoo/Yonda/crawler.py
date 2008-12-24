@@ -20,7 +20,7 @@ def main():
 
     cur.execute('select * from ttag')
     taglist = cur.fetchall()
-    print taglist
+    #print taglist
 
     for i, tag in taglist:
         i = 0

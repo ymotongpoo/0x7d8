@@ -84,7 +84,6 @@ class HatenaBookmark:
         return parser.entries
 
 
-
     def searchByTag(self, tag, sort=u'', offset=0):
         if len(tag) != 0:
             uri = self.rooturi + u't/' + tag
@@ -101,8 +100,11 @@ class HatenaBookmark:
         if len(getdict):
             params = urllib.urlencode(getdict)
             uri += '?' + params
-        
+
         f = urllib.urlopen(uri.encode(self.hbcodec))
-        data = f.readlines()[21:] # magic code for hatena bookmark result
-        data = '\r'.join(data)
+        data = f.readlines() # magic code for hatena bookmark result
+        for i, l in enumerate(data):
+            data[i] = l.lstrip()
+            
+        data = ''.join(data)
         return self.__parseResultBody(data)
