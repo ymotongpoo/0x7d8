@@ -70,13 +70,17 @@ def entry(req, sort='updated', offset=0):
         dt = datetime(st.tm_year, st.tm_mon, st.tm_mday, st.tm_hour, st.tm_min, st.tm_sec)
         jst = dt + timedelta(hours=9)
         updated = jst.strftime('%m/%d %H:%M')
-        
+
+        # shorten site title
+        site_title = row[5].decode(CODING)
+        site_title = site_title[:10].encode(CODING)
+
         e = dict(url=row[0],
                  title=row[1],
                  summary=row[2],
                  updated=updated,
                  site_url=row[4],
-                 site_title=row[5])
+                 site_title=site_title)
         entrylist.append(e)
         
     loader = TemplateLoader([BASE_DIR])

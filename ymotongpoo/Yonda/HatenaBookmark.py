@@ -13,6 +13,7 @@ __credits__="0x7d8 -- programming training"
 
 import urllib
 from HTMLParser import HTMLParser, HTMLParseError
+import re # temporary for invalid HTML of hatena bookmark web page
 
 class ExtractEntryInfo(HTMLParser):
     def __init__(self):
@@ -103,7 +104,9 @@ class HatenaBookmark:
 
         f = urllib.urlopen(uri.encode(self.hbcodec))
         data = f.readlines() # magic code for hatena bookmark result
+        p = re.compile('"class')
         for i, l in enumerate(data):
+            l = p.sub('" class', l)
             data[i] = l.lstrip()
             
         data = ''.join(data)

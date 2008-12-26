@@ -40,7 +40,7 @@ def main():
                     cur.execute('update tbookmark set url = ?, title = ?, user = ? where url = ?', t)
                 else:
                     t = (e['url'].encode('utf-8'), e['title'].encode('utf-8'), e['user'])
-                    cur.execute('insert into tbookmark values (?,?,?)', t)
+                    cur.execute('insert into tbookmark (url, title, user) values (?,?,?)', t)
 
                 c.commit()
 
