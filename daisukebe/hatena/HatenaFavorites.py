@@ -31,7 +31,6 @@ def userslist(url):
     return users
         
 def getuserlist(user=None):
-    ERROR_CODE = 'user not found'
     favorite_list = []
 
     favorites_users_json = 'http://s.hatena.ne.jp/' + user + '/favorites.json'
@@ -39,7 +38,7 @@ def getuserlist(user=None):
     try:
         re = urllib2.urlopen(favorites_users_json)
     except:
-        print ERROR_CODE
+        print 'user not found'
         return favorite_list
     
     users_favorites = json.JsonReader().read(re.next())
