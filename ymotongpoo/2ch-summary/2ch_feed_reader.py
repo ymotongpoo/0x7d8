@@ -45,24 +45,19 @@ def entry(req, sort='updated', offset=0):
 
     # create index
     for i in range(1,11):
-        getdict = dict(sort=sort,
-                       offset=(i-1)*entry_per_page)
         link_index.append(dict(num=i,
-                               link = './entry?' + urllib.urlencode(getdict)))
+                               link = '/dokuo/' + sort + '/' + str((i-1)*entry_per_page)))
 
     # create navigator
     navi_index = {}
     current = int(offset) / entry_per_page + 1 # page number
     prev = (int(offset) / entry_per_page - 1) * entry_per_page
-    next = (int(offset) / entry_per_page + 1)*entry_per_page
+    next = (int(offset) / entry_per_page + 1) * entry_per_page
     navi_index['current'] = current
-    navi_index['prev'] = './entry?' + urllib.urlencode(dict(sort=sort,
-                                                            offset=prev if prev > 0 else 0))
-    navi_index['next'] = './entry?' + urllib.urlencode(dict(sort=sort,
-                                                            offset=next if next > 0 else 0))
+    navi_index['prev'] = '/dokuo/' + sort + '/' + str(prev if prev > 0 else 0)
+    navi_index['next'] = '/dokuo/' + sort + '/' + str(next if next > 0 else 0)
     navi_index['title'] = title[sort]
-    
-   
+  
     entrylist = []
     for row in cur:
         # change UTC to JST
