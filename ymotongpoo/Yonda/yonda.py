@@ -19,7 +19,7 @@ conn = sqlite3.connect(DBPATH)
 cur = conn.cursor()
 
 # popular entry
-cur.execute('select url, title from tbookmark order by user desc limit 10')
+cur.execute('select url, title, user+clip point from tbookmark order by point desc limit 10')
 bookmarks = []
 for row in cur:
     bookmarks.append(dict(url=row[0], title=row[1]))

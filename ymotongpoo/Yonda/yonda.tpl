@@ -12,20 +12,46 @@
   <body>
 	<div class="ranking">
 	  <h3>人気「あとでよむ」エントリ</h3>
-	  <ol>
-		<li py:for="bookmark in bookmarks">
-		<a href="${bookmark.url}">${bookmark.title}<img src="http://b.hatena.ne.jp/entry/image/normal/${bookmark.url}"/></a>
-		</li>
-	  </ol>
+	  <table>
+		<tr>
+		  <td>タイトル</td>
+		  <td>はてブ</td>
+		  <td>Livedoor</td>
+		</tr>
+		<tr py:for="bookmark in bookmarks">
+		  <td>
+			<a href="${bookmark.url}">${bookmark.title}</a>
+		  </td>
+		  <td>
+			<img src="http://b.hatena.ne.jp/entry/image/normal/${bookmark.url}"/>
+		  </td>
+		  <td>
+			<img src="http://image.clip.livedoor.com/counter/${bookmark.url}"/>
+		  </td>
+		</tr>
+	  </table>
 	</div>
 
 	<div class="ranking">
 	  <h3>ホット「あとでよむ」エントリ</h3>
-	  <ol>
-		<li py:for="bookmark in hotentry">
-		<a href="${bookmark.url}">${bookmark.title}<img src="http://b.hatena.ne.jp/entry/image/normal/${bookmark.url}"/></a>
-		</li>
-	  </ol>
+	  <table>
+		<tr>
+		  <td>タイトル</td>
+		  <td>はてブ</td>
+		  <td>Livedoor</td>
+		</tr>
+		<tr py:for="bookmark in hotentry">
+		  <td>
+			<a href="${bookmark.url}">${bookmark.title}</a>
+		  </td>
+		  <td>
+			<img src="http://b.hatena.ne.jp/entry/image/normal/${bookmark.url}"/>
+		  </td>
+		  <td>
+			<img src="http://image.clip.livedoor.com/counter/${bookmark.url}"/>
+		  </td>
+		</tr>
+	  </table>
 	</div>
 	
 	<!-- Google Analytics -->
