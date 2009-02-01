@@ -26,15 +26,15 @@ def main():
     num_bookmark = cur.fetchone()[0]
 
     for i in range(0, num_bookmark/UPDATE_UNIT):
-        cur.execute('select url, user from tbookmark order by user desc limit 10 offset ' + str(i * UPDATE_UNIT))
+        cur.execute('select url, user+clip+buzz as point from tbookmark order by user desc limit 10 offset ' + str(i * UPDATE_UNIT))
         rows = cur.fetchall()
-        for row in rows:
-            try:
+        try:
+            for row in rows:
                 #print row[0]
                 params = urllib.urlencode({'url':row[0]})
                 f = urllib.urlopen(HATENA_URL + '?' + params)
                 data = f.read()
-                info = simplejson.loads(data.strip("(").rstrip(")"))
+                info = simplejson.loads(data.lstrip("(").rstrip(")"))
                 
                 timestamp = []
                 for b in info['bookmarks']:
@@ -45,16 +45,20 @@ def main():
                 oldest_format = time.strftime('%Y-%m-%d %H:%M:%S', oldest_sec)
                 delta = time.mktime(time.localtime()) - time.mktime(oldest_sec)
                 delta = datetime.timedelta(seconds=delta)
+                # calculate hotpoint
                 hotpoint = row[1]*pow(0.5, float(delta.days)/HALF_LIFE)
 
                 t = (str(hotpoint), oldest_format, row[0])
-                print t
                 cur.execute("update tbookmark set hotpoint=?, timestamp=? where url=?",t)
+                
+            conn.commit()
 
-            except Exception, e:
-                print e
-                continue
-        conn.commit()
+        except Exception, e:
+            print e
+            conn.rollback()
+            continue
+
+        print '>>', str(i), 'th'
 
     conn.close()
 

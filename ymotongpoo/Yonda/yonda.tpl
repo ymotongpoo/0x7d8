@@ -10,6 +10,36 @@
 	<title>よんだ？</title>
   </head>
   <body>
+	<div class="banner">
+	  <img src="Yonda.png"/>
+	</div>
+
+	<div class="ranking">
+	  <h3>ホット「あとでよむ」エントリ</h3>
+	  <table>
+		<tr>
+		  <td>タイトル</td>
+		  <td>はてブ</td>
+		  <td>Livedoor</td>
+		  <td>Buzzurl</td>
+		</tr>
+		<tr py:for="bookmark in hotentry">
+		  <td>
+			<a href="${bookmark.url}">${bookmark.title}</a>
+		  </td>
+		  <td>
+			<img src="http://b.hatena.ne.jp/entry/image/normal/${bookmark.url}"/>
+		  </td>
+		  <td>
+			<img src="http://image.clip.livedoor.com/counter/${bookmark.url}"/>
+		  </td>
+		  <td>
+			<img src="http://api.buzzurl.jp/api/counter/${bookmark.url}"/>
+		  </td>
+		</tr>
+	  </table>
+	</div>
+
 	<div class="ranking">
 	  <h3>人気「あとでよむ」エントリ</h3>
 	  <table>
@@ -17,6 +47,7 @@
 		  <td>タイトル</td>
 		  <td>はてブ</td>
 		  <td>Livedoor</td>
+		  <td>Buzzurl</td>
 		</tr>
 		<tr py:for="bookmark in bookmarks">
 		  <td>
@@ -28,27 +59,8 @@
 		  <td>
 			<img src="http://image.clip.livedoor.com/counter/${bookmark.url}"/>
 		  </td>
-		</tr>
-	  </table>
-	</div>
-
-	<div class="ranking">
-	  <h3>ホット「あとでよむ」エントリ</h3>
-	  <table>
-		<tr>
-		  <td>タイトル</td>
-		  <td>はてブ</td>
-		  <td>Livedoor</td>
-		</tr>
-		<tr py:for="bookmark in hotentry">
 		  <td>
-			<a href="${bookmark.url}">${bookmark.title}</a>
-		  </td>
-		  <td>
-			<img src="http://b.hatena.ne.jp/entry/image/normal/${bookmark.url}"/>
-		  </td>
-		  <td>
-			<img src="http://image.clip.livedoor.com/counter/${bookmark.url}"/>
+			<img src="http://api.buzzurl.jp/api/counter/${bookmark.url}"/>
 		  </td>
 		</tr>
 	  </table>
