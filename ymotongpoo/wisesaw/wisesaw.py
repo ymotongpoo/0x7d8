@@ -77,11 +77,15 @@ def main():
         parser.close()
         wise_saw = parser.wise_saw.encode(parser.codec)
         author = parser.author.encode(parser.codec)
+        author.strip()
 
         description = '%s （%s）' % (wise_saw, author)
 
-        twitter = Twitter(username, password)
-        twitter.updateStatus(description, 'Python')
+        if len(wise_saw) > 0 && len(author) > 0:
+            twitter = Twitter(username, password)
+            twitter.updateStatus(description, 'Python')
+        else:
+            main()
 
     except HTMLParseError, msg:
         print msg
