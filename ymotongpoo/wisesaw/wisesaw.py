@@ -81,7 +81,7 @@ def main():
 
         description = '%s （%s）' % (wise_saw, author)
 
-        if len(wise_saw) > 0 && len(author) > 0:
+        if len(wise_saw) > 0 and len(author) > 0:
             twitter = Twitter(username, password)
             twitter.updateStatus(description, 'Python')
         else:
