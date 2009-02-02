@@ -25,7 +25,8 @@ def main():
     cur.execute('select count(url) from tbookmark')
     num_bookmark = cur.fetchone()[0]
 
-    for i in range(0, num_bookmark/UPDATE_UNIT):
+    #for i in range(0, num_bookmark/UPDATE_UNIT):
+    for i in range(0, 2):
         cur.execute('select url, user+clip+buzz as point from tbookmark order by user desc limit 10 offset ' + str(i * UPDATE_UNIT))
         rows = cur.fetchall()
         try:
@@ -34,6 +35,8 @@ def main():
                 params = urllib.urlencode({'url':row[0]})
                 f = urllib.urlopen(HATENA_URL + '?' + params)
                 data = f.read()
+                print data
+                """
                 info = simplejson.loads(data.lstrip("(").rstrip(")"))
                 
                 timestamp = []
@@ -52,10 +55,11 @@ def main():
                 cur.execute("update tbookmark set hotpoint=?, timestamp=? where url=?",t)
                 
             conn.commit()
+            """
 
         except Exception, e:
             print e
-            conn.rollback()
+            #conn.rollback()
             continue
 
         print '>>', str(i), 'th'
