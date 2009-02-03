@@ -1,4 +1,4 @@
-#-*- encoding: utf-8 -*-;
+﻿#-*- encoding: utf-8 -*-;
 __author__="ymotongpoo <ymotongpoo@gmail.com>"
 __date__ ="$2009/02/02 22:43:10$"
 __version__="$Revision: 0.10"
@@ -8,14 +8,38 @@ import urllib
 import re
 from HTMLParser import HTMLParser, HTMLParseError
 
+MONTH = {'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+         'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'}
+
+YEAR = range(2005, 2010)
+
 class MixiOpener(urllib.FancyURLopener):
-    
+    def login(self, email, password):
+        LOGIN_URL = 'http://mixi.jp/login.pl'
+        params = urllib.urlencode({
+            'email': email,
+            'password': password,
+            'next_url': 'home.pl'})
+
+        r = self.open(LOGIN_URL, params)
+        cookie = []
+        for c in r.headers.getheaders('Set-Cookie'):
+            m = re.match('(.+=.+);.*', c)
+            if m:
+                cookie.append(m.groups()[0])
+
+        self.addheader('Cookie', ';'.join(cookie))
+        r = self.open('http://mixi.jp/check.pl?n=home.pl')
+        return r.read()
+
+
+class MixiExtractor():
     class ExtractEntryUrl(HTMLParser):
         def __init__(self):
             HTMLParser.__init__(self)
             self.codec = 'euc-jp'
             self.view_url_r = re.compile('^view_diary.pl\?id=[0-9]+&owner_id=[0-9]+$')
-            
+
             self.urls = []
 
             self.in_diary_title = False
@@ -41,10 +65,9 @@ class MixiOpener(urllib.FancyURLopener):
     class ExtractEntryBody(HTMLParser):
         def __init__(self, comment=False):
             HTMLParser.__init__(self)
-            self.codec = 'euc-jp'            
+            self.codec = 'euc-jp'
             self.comment = comment
 
-            self.entries = []
             self.entry = {}
 
             self.in_title = False
@@ -67,7 +90,7 @@ class MixiOpener(urllib.FancyURLopener):
             if 'div' == tag and 'id' in attrs:
                 if 'diary_body' == attrs['id']:
                     self.in_diary_body = True
-                    
+
         def handle_endtag(self, tag):
             if 'div' == tag and self.in_title:
                 self.in_title = False
@@ -90,37 +113,21 @@ class MixiOpener(urllib.FancyURLopener):
             if self.in_diary_body:
                 self.entry['body'] += data.decode(self.codec)
 
+    def __init__(self, username, password):
+        mo = MixiOpener()
+        mo.login(username, password)
 
-    def __extractUrl(self, htmlbody):
+    def __extractContents(self, htmlbody, parser):
         try:
-            parser = self.ExtractEntryUrl()
+            parser = parser
             parser.feed(htmlbody)
             parser.close()
+            return parser
         except HTMLParseError, msg:
             print 'Error Message: %s' % msg
-            
-        return parser.urls
 
-        
-    def login(self, email, password):
-        LOGIN_URL = 'http://mixi.jp/login.pl'
-        params = urllib.urlencode({
-            'email': email,
-            'password': password,
-            'next_url': 'home.pl'})
-
-        r = self.open(LOGIN_URL, params)
-        cookie = []
-        for c in r.headers.getheaders('Set-Cookie'):
-            m = re.match('(.+=.+);.*', c)
-            if m:
-                cookie.append(m.groups()[0])
-
-        self.addheader('Cookie', ';'.join(cookie))
-        r = self.open('http://mixi.jp/check.pl?n=home.pl')
-        return r.read()
-
-    def getEntryUrls(self, year, month):
+    def getMonthEntryUrls(self, year, month):
+        # magic number
         offset = 310
         limit = 895
         MONTH_PAGE_URL = u'http://mixi.jp/list_diary.pl'
@@ -134,19 +141,50 @@ class MixiOpener(urllib.FancyURLopener):
                 'page': i})
             print params
             r = self.open(MONTH_PAGE_URL, params)
+
             lines = r.readlines()[offset:limit]
             data = '\n'.join(lines)
-            page_urls = self.__extractUrl(data)
+
+            page_urls = self.__extractContents(data, self.ExtractEntryUrl()).urls
             if not len(page_urls):
                 break
             else:
                 urls += page_urls
                 i += 1
-        
+
         return urls
 
+    def getMonthEntryBody(self, entryurls):
+        entries = []
+        for u in entryurls:
+            r = self.open(u)
+            lines = r.readlines()[offset:limit]
+            data = '\n'.join(lines)
+            page_entry = self.__extractContents(data, self.ExtractEntrBody()).entry
+            entries.append(page_entry)
+
+        return entries
+
+
+def downloadMixiEntries(username, password):
+    me = MixiExtratcor(username, password)
+    for y in YEAR:
+        for m, mon in enumerate(MONTH):
+            urls = me.getMonthEntryUrls(y, m)
+            entries = getMonthEntryBody(urls)
+
+            filename = str(y) + mon + '.txt'
+            fp = open(filename)
+
+            for e in entries:
+                fp.write(entries.date)
+                fp.write(entries.title)
+                fp.write(entries.body)
+
+            fp.close()
+
+
 if __name__ == '__main__':
-    m = MixiOpener()
-    m.login('hoge', 'piyo')
-    print len(m.getEntryUrls(2005, 12))
-    
+    downloadMixiEntries('hoge', 'piyo')
+
+
