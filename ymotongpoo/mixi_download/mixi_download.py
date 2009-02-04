@@ -7,6 +7,8 @@ __credits__="0x7d8 -- programming training"
 import urllib
 import re
 import time
+import sys
+import getopt
 from StringIO import StringIO
 from lxml import etree
 
@@ -70,9 +72,10 @@ class MixiExtractor(urllib.FancyURLopener):
 
     def getMonthEntryBody(self, entryurls):
         def extractEntryContents(node):
+            print 'extracting ...'
             date = ''.join(node.xpath('//div[@class="listDiaryTitle"]//dd/text()'))
             title = ''.join(node.xpath('//div[@class="listDiaryTitle"]//dt/text()'))
-            body = '\r'.join(node.xpath('//div[@id="diary_body"]/text()'))
+            body = '\n'.join(node.xpath('//div[@id="diary_body"]/text()'))
 
             return dict(date=date, title=title, body=body)
 
@@ -115,9 +118,29 @@ def downloadMixiEntries(username, password):
 
             fp.close()
 
+def usage():
+    print 'python mixi_download.py -u [USERNAME] -p [PASSWORD]'
 
 
 if __name__ == '__main__':
-    downloadMixiEntries('hoge', 'piyo')
+    argvs = sys.argv
+    argc = len(argvs)
+
+    try:
+        opts, opt_args = getopt.getopt(argvs[1:], "u:p:c:")
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+
+    userinfo = {'-u':None, '-p':None, '-c':None}
+    for o, v in opts:
+        userinfo[o] = v
+
+    if not userinfo['-c']:
+        userinfo['-c'] = False
+    else:
+        userinfo['-c'] = True
+
+    downloadMixiEntries(userinfo['-u'], userinfo['-p'])
 
 
