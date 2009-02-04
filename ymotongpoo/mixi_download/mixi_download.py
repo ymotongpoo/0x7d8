@@ -58,13 +58,13 @@ class MixiExtractor(urllib.FancyURLopener):
             for u in whole_urls:
                 if view_url_r.match(u):
                     page_urls.append(u)
-            
+
             if not len(page_urls):
                 break
             else:
                 urls += page_urls
                 i += 1
-            
+
 
         return map(lambda u:ROOT_URL+u, urls)
 
@@ -72,12 +72,12 @@ class MixiExtractor(urllib.FancyURLopener):
         def extractEntryContents(node):
             date = ''.join(node.xpath('//div[@class="listDiaryTitle"]//dd/text()'))
             title = ''.join(node.xpath('//div[@class="listDiaryTitle"]//dt/text()'))
-            body = ''.join(node.xpath('//div[@id="diary_body"]/text()'))
-            
+            body = '\r'.join(node.xpath('//div[@id="diary_body"]/text()'))
+
             return dict(date=date, title=title, body=body)
-            
+
         entries = []
-        
+
         for u in entryurls:
             print u
             r = self.open(u)
@@ -100,7 +100,7 @@ def downloadMixiEntries(username, password):
     for y in YEAR:
         for m, mon in enumerate(MONTH):
             urls = me.getMonthEntryUrls(y, m+1)
-            
+
             entries = me.getMonthEntryBody(urls)
 
             filename = str(y) + str(m+1).zfill(2) + '.txt'
