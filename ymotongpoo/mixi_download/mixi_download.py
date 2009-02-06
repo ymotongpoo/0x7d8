@@ -74,23 +74,22 @@ class MixiExtractor(urllib.FancyURLopener):
 
     def getMonthEntryBody(self, entryurls, comment):
         def extractCommentContents(node):
-            cdate = ''.join(node.xpath('//span[@class="commentTitleDate"]/text()'))
-            cuser = ''.join(node.xpath('//span[@class="commentTitleName"]//a/text()'))
-            cbody = '\n'.join(node.xpath('//dd/text()'))
+            cdate = ''.join(node.xpath('.//span[@class="commentTitleDate"]/text()'))
+            cuser = ''.join(node.xpath('.//span[@class="commentTitleName"]//a/text()'))
+            cbody = '\n'.join(node.xpath('.//dd/text()'))
             return dict(cdate=cdate.decode(self.mixicodec), \
                         cuser=cuser.decode(self.mixicodec), \
                         cbody=cbody.decode(self.mixicodec))
             
         def extractEntryContents(node, comment):
             print 'extracting ...'
-            date = ''.join(node.xpath('//div[@class="listDiaryTitle"]//dd/text()'))
-            title = ''.join(node.xpath('//div[@class="listDiaryTitle"]//dt/text()'))
-            body = '\n'.join(node.xpath('//div[@id="diary_body"]/text()'))
+            date = ''.join(node.xpath('.//div[@class="listDiaryTitle"]//dd/text()'))
+            title = ''.join(node.xpath('.//div[@class="listDiaryTitle"]//dt/text()'))
+            body = '\n'.join(node.xpath('.//div[@id="diary_body"]/text()'))
 
             if comment:
                 cnodes = node.xpath('//div[@class="diaryCommentbox" or @class="diaryCommentboxLast"]')
                 comments = [extractCommentContents(c) for c in cnodes]
-                print len(comments)
                 return dict(date=date.decode(self.mixicodec), \
                             title=title.decode(self.mixicodec), \
                             body=body.decode(self.mixicodec), \
