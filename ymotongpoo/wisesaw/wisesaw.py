@@ -17,7 +17,7 @@ import urllib
 from HTMLParser import HTMLParser, HTMLParseError
 from Haiku import Twitter
 
-WISE_SAW_URL = u'http://www.meigensyu.com/quotations/view/random'
+WISE_SAW_URL = 'http://www.meigensyu.com/quotations/view/random'
 
 username = 'hoge'
 password = 'piyo'
@@ -77,7 +77,7 @@ def main():
         parser.close()
         wise_saw = parser.wise_saw.encode(parser.codec)
         author = parser.author.encode(parser.codec)
-        author.strip()
+        author = author.strip()
 
         description = '%s （%s）' % (wise_saw, author)
 
@@ -88,7 +88,7 @@ def main():
             main()
 
     except HTMLParseError, msg:
-        print msg
+        print 'HTMLParseError:', msg
         main()
 
     except Exception, e:

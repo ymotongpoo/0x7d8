@@ -2,9 +2,12 @@
 """
 Haiku.py
 
-Based on Twitter API
+Based on Twitter REST API
     (Japanese) http://watcher.moe-nifty.com/memo/docs/twitterAPI13.txt
     (Original) http://apiwiki.twitter.com/REST+API+Documentation
+
+Also Twitter Search API
+    (Original) http://apiwiki.twitter.com/Search+API+Documentation
 """
 
 __author__="ymotongpoo <ymotongpoo@gmail.com>"
@@ -23,6 +26,7 @@ class Twitter:
         self.username = username
         self.password = password
         self.base_url = base_url if len(base_url) > 0 else 'http://twitter.com/'
+        self.search_url = search_url if len(search_url) > 0 else 'http://search.twitter.com/'
         
         if len(proxy_host) > 0 and type(proxy) is IntType:
             self.proxies = {'http': proxy_host + ':' + proxy_port}
@@ -292,3 +296,8 @@ class Twitter:
         post_dict = self.__query_dict_generator(locals())
         d = self.__open_url_in_post(url, post_dict)
         return d
+
+    def search(self, word, fromuser, touser, refuser, hashtag, format):
+        if (word != None):
+            
+        pass
