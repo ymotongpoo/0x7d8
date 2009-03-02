@@ -88,11 +88,7 @@ int main(int argc, char *argv[])
 	add("daisuke");		/* 2 */
 	add("hugauga");		/* 8 */
 	add("hugahuga");	/* 2 */
-	add("yosuke");		/* 2 */
-	add("yosukebe");
-	add("pho");
-	add("shiumachi");
-	add("kany");
+	add("yosuke");
 
 	while(i < MAX){
 		printf("%d:\n", i);
