@@ -45,20 +45,20 @@ int find(char *name)
 	return 0;		/* do not exist */
 }
 
-int add(char *name)
+void add(char *name)
 {
 	int i, h;
 	CELL *new, *p;
 	/* printf("%d\n", hash(name)); */
 
 	if(find(name) == 1)
-		return 1;
+		return;
 
 
 	h = hash(name);
 	if((new = malloc(sizeof(CELL))) == NULL){
 		printf("out of memory\n");
-		return -1;
+		return;
 	}
 
 	new->key = h;
@@ -74,8 +74,6 @@ int add(char *name)
 		table[h] = new;
 	}
 		
-	return 0;
-
 }
 
 int main(int argc, char *argv[])
@@ -85,10 +83,10 @@ int main(int argc, char *argv[])
 
 	init(table);
 
-	add("daisuke");		/* 2 */
-	add("hugauga");		/* 8 */
-	add("hugahuga");	/* 2 */
-	add("yosuke");
+
+	add("sony");		/* 2 */
+	add("toshiba");		/* 5 */
+	add("panasonic");	/* 7 */
 
 	while(i < MAX){
 		printf("%d:\n", i);
