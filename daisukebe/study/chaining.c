@@ -95,7 +95,7 @@ int delete(char *name)
 		}
 	}
 
-	if(pp == table[h]){
+	if(p == table[h]){
 		pp->name = NULL;
 
 	}else {
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 	printf("\n");
 
 	i = 0;
-	
+
 	if((c = delete("toshiba")) == 0)
 		printf("do not exist\n");
 	else {
@@ -150,6 +150,7 @@ int main(int argc, char *argv[])
 			i++;
 		}
 	}
+
 
 	return 0;
 
