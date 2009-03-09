@@ -36,7 +36,7 @@ int find(char *name)
 	CELL *p;
 	for(p = table[hash(name)]; p != NULL; p = p->next){
 		if(p->name == name){
-			printf("%s\n", p->name);
+			//printf("%s\n", p->name);
 			return 1; /* exist */
 		}
 
@@ -76,6 +76,38 @@ void add(char *name)
 		
 }
 
+int delete(char *name)
+{
+	int c = 0, h;
+	CELL *p, *pp;
+
+	if((c = find(name)) == 0)
+		return 0;	/* do not exist */
+	else{
+		h = hash(name);
+		pp = p = table[h];
+		
+		while(p != NULL){
+			if(p->name == name)
+				break;
+			pp = p;
+			p = p->next;
+		}
+	}
+
+	if(pp == table[h]){
+		pp->name = NULL;
+
+	}else {
+		pp->next = p->next;
+		p = NULL;
+		free(p);
+	}
+
+	return 1;
+
+}
+
 int main(int argc, char *argv[])
 {
 	int i = 0, c = 0;
@@ -84,9 +116,9 @@ int main(int argc, char *argv[])
 	init(table);
 
 
-	add("sony");		/* 2 */
-	add("toshiba");		/* 5 */
-	add("panasonic");	/* 7 */
+	add("sony");		/* 7 */
+	add("toshiba");	/* 6 */
+	add("panasonic");	/* 6 */
 
 	while(i < MAX){
 		printf("%d:\n", i);
@@ -99,9 +131,27 @@ int main(int argc, char *argv[])
 		
 		i++;
 	}
+	printf("\n");
 
-
+	i = 0;
+	
+	if((c = delete("toshiba")) == 0)
+		printf("do not exist\n");
+	else {
+		while(i < MAX){
+			printf("%d:\n", i);
+			for(p = table[i]; p != NULL; p = p->next){
+				printf("    %s\n", p->name);
+				if(p->next == table[i])
+					break;
+			}
+			
+			
+			i++;
+		}
+	}
 
 	return 0;
 
 }
+
