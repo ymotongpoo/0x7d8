@@ -19,6 +19,7 @@ private:
 class LinkedList {
 public:
 	LinkedList();
+	~LinkedList();
 	int insert_cell(int _val);
 	int delete_cell(int _val);
 	Cell* create_cell(int _val);
