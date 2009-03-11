@@ -8,6 +8,8 @@ int main() {
 	ll->insert_cell(4);
 	ll->insert_cell(-1);
 	ll->insert_cell(-100);
+
+	ll->delete_cell(5);
 	ll->print_all();
 	
 	return 0;
