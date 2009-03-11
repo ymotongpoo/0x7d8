@@ -19,10 +19,9 @@ inline void Cell::next_cell(Cell* _cell) {
 	this->next = _cell;
 }
 
-inline int Cell::get_data() { 
-	return this->data; 
+inline int Cell::get_data() {
+	return this->data;
 }
-
 
 LinkedList::LinkedList() {
 	head = NULL;
@@ -48,13 +47,13 @@ int LinkedList::insert_cell(int _val) {
 				break;
 			p = c;
 		}
-		
+
 		if ( c == head ) {
 			Cell* new_head = create_cell(_val);
 			new_head->next_cell(head);
 			head = new_head;
 		}
-		else {	
+		else {
 			p->next_cell(create_cell(_val));
 			p->next_cell()->next_cell(c);
 		}
@@ -64,11 +63,23 @@ int LinkedList::insert_cell(int _val) {
 }
 
 int LinkedList::delete_cell(int _val) {
+	Cell* c = find_cell(_val);
+	Cell* p = NULL;
+	for (p = head; p; p = p->next) {
+		if ( c == p->next )
+			break;
+	}
+	p->next = c->next;
+	delete c;
+
 	return 0;
 }
 
 inline Cell* LinkedList::create_cell(int _val) {
 	return new Cell(_val, NULL);
+}
+
+Cell* LinkedList::find_cell(int _val) {
 }
 
 void LinkedList::print_all() {
