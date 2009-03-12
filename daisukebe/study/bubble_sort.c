@@ -23,10 +23,6 @@ void bbbl_sort(int table[])
 				table[j-1] = t;
 			}
 
-
-	
-				
-
 }
 
 int main(int argc, char *argv)
