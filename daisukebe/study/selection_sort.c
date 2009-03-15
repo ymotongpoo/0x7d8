@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 100
+#define MAX 10
 
 void insert(int table[])
 {
@@ -13,14 +13,14 @@ void insert(int table[])
 
 void slct_sort(int table[])
 {
-	int i, j, s, min_key, min_id;
+	int i, j, s, min, min_id;
 
 	for(i = 0; i < MAX; i++){
-		min_key = table[i];
+		min = table[i];
 		min_id = i;
-		for(j = i; j < MAX; j++){
-			if(min_key > table[j]){
-				min_key = table[j];
+		for(j = i + 1; j < MAX; j++){
+			if(min > table[j]){
+				min = table[j];
 				min_id = j;
 			}
 		}
