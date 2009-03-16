@@ -1,16 +1,16 @@
-#include "doubly_linked_list.h"
+#include "circularly_linked_list.h"
 
 int main() {
-	DoublyLinkedList* dll = new DoublyLinkedList();
+	CircularlyLinkedList* cll = new CircularlyLinkedList();
 	for (int i = 1; i < 10; i++) {
-		dll->insert_cell(i);
+		cll->insert_cell(i);
 	}
-	dll->insert_cell(4);
-	dll->insert_cell(-1);
-	dll->insert_cell(-100);
+	cll->insert_cell(4);
+	cll->insert_cell(-1);
+	cll->insert_cell(-100);
 
-	dll->delete_cell(5);
-	dll->print_all();
-	
+	cll->delete_cell(5);
+	//cll->print_all();
+
 	return 0;
 }

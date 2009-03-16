@@ -52,33 +52,36 @@ CircularlyLinkedList::~CircularlyLinkedList() {
 
 int CircularlyLinkedList::insert_cell(int _val) {
 	if ( head == NULL ) {
+		cerr << "head null" << endl;
 		head = create_cell(_val);
-		head->next_cell(this);
-		head->prev_cell(this);
+		head->next_cell(head);
+		head->prev_cell(head);
 	}
 	else {
-		Cell* p = head;
-		Cell* c = NULL;
-		for ( c = head; c != head; c = c->next_cell() ) {
-			if (c->get_data() > _val)
-				break;
-			p = c;
+		Cell* c = head;
+		Cell* n = head->next_cell();
+		while ( n != head && _val > n->get_data() ) {
+			cerr << "ok00" << endl;
+			c = n;
+			cerr << "ok01" << endl;
+			n = n->next_cell();
 		}
 
-		if ( c == head ) {
+		if ( n == head ) {
 			Cell* new_head = create_cell(_val);
 			new_head->next_cell(head);
 			head->prev_cell(new_head);
 			head = new_head;
 		}
 		else {
+			cerr << "hello" << endl;
 			Cell* new_cell = create_cell(_val);
-			p->next_cell(new_cell);
-			if (c != head)
-				c->prev_cell(new_cell);
+			c->next_cell(new_cell);
+			if (n != head)
+				n->prev_cell(new_cell);
 
-			new_cell->next_cell(c);
-			new_cell->prev_cell(p);
+			new_cell->next_cell(n);
+			new_cell->prev_cell(c);
 		}
 	}
 
