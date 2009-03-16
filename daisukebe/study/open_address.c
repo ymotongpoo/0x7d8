@@ -51,6 +51,7 @@ void add(char *name)
 
 	
 	table[h].name = name;
+	table[h].key = h * 10;
 
 }
 
@@ -72,11 +73,24 @@ void delete(char *name)
 	
 }
 
+int search(char *name)
+{
+	int h = hash(name);
+	int hh = h - 1;
+
+	while(table[h].key != 0){
+		//if(table[h].name != name && table[h].key != DELETED)
+	}
+
+	return 0;
+
+}
+
 
 int main(int argc, char *argv[])
 {
 
-	int i = 0;
+	int i = 0, s = 0;
 
 	init(table);
 
@@ -92,9 +106,15 @@ int main(int argc, char *argv[])
 
 		i++;
 	}
+	/*
+	s = search("sony");
+	if(s  == 1)
+		printf("aruyo\n");
+	else if(s == -1)
+		printf()
+	*/
 
-
-	printf("\nafter\n");
+	/*
 	delete("honda");
 
 	i = 0;
@@ -104,7 +124,7 @@ int main(int argc, char *argv[])
 
 		i++;
 	}
-
+	*/
 
 	return 0;
 
