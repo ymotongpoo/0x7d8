@@ -1,7 +1,5 @@
 #include "circularly_linked_list.h"
 
-using std::cerr; using std::endl;
-
 Cell::Cell(int _data, Cell* _next, Cell* _prev) {
 	data = _data;
 	next = _next;
@@ -74,7 +72,6 @@ int CircularlyLinkedList::insert_cell(int _val) {
 			new_cell->prev_cell(c);
 		}
 		else {
-			cerr << _val << "\t" << head << "\t" << p << "\t" << c << "\t" << n << endl;
 			Cell* new_cell = create_cell(_val);
 			p->next_cell(new_cell);
 			c->prev_cell(new_cell);
@@ -83,16 +80,6 @@ int CircularlyLinkedList::insert_cell(int _val) {
 
 			if ( c == head )
 				head = new_cell;
-
-			/*
-			Cell* new_cell = create_cell(_val);
-			c->next_cell(new_cell);
-			if (n != head)
-				n->prev_cell(new_cell);
-
-			new_cell->next_cell(n);
-			new_cell->prev_cell(c);
-			*/
 		}
 	}
 
