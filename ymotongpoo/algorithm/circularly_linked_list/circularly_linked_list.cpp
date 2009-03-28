@@ -52,29 +52,39 @@ CircularlyLinkedList::~CircularlyLinkedList() {
 
 int CircularlyLinkedList::insert_cell(int _val) {
 	if ( head == NULL ) {
-		cerr << "head null" << endl;
 		head = create_cell(_val);
 		head->next_cell(head);
 		head->prev_cell(head);
 	}
 	else {
 		Cell* c = head;
-		Cell* n = head->next_cell();
-		while ( n != head && _val > n->get_data() ) {
-			cerr << "ok00" << endl;
+		Cell* n = c->next_cell();
+		Cell* p = c->prev_cell();
+		while ( n != head && _val > c->get_data() ) {
+			p = c;
 			c = n;
-			cerr << "ok01" << endl;
 			n = n->next_cell();
 		}
 
 		if ( n == head ) {
-			Cell* new_head = create_cell(_val);
-			new_head->next_cell(head);
-			head->prev_cell(new_head);
-			head = new_head;
+			Cell* new_cell = create_cell(_val);
+			new_cell->next_cell(head);
+			head->prev_cell(new_cell);
+			c->next_cell(new_cell);
+			new_cell->prev_cell(c);
 		}
 		else {
-			cerr << "hello" << endl;
+			cerr << _val << "\t" << head << "\t" << p << "\t" << c << "\t" << n << endl;
+			Cell* new_cell = create_cell(_val);
+			p->next_cell(new_cell);
+			c->prev_cell(new_cell);
+			new_cell->next_cell(c);
+			new_cell->prev_cell(p);
+
+			if ( c == head )
+				head = new_cell;
+
+			/*
 			Cell* new_cell = create_cell(_val);
 			c->next_cell(new_cell);
 			if (n != head)
@@ -82,6 +92,7 @@ int CircularlyLinkedList::insert_cell(int _val) {
 
 			new_cell->next_cell(n);
 			new_cell->prev_cell(c);
+			*/
 		}
 	}
 
@@ -112,7 +123,7 @@ void CircularlyLinkedList::print_all() {
 	Cell* c = head;
 	while(1) {
 		cerr << c->get_data() << endl;
-		if ( !c->next_cell() )
+		if ( c->next_cell() == head )
 			break;
 		c = c->next_cell();
 	}
