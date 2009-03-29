@@ -83,8 +83,18 @@ int DoublyLinkedList::insert_cell(int _val) {
 
 int DoublyLinkedList::delete_cell(int _val) {
 	Cell* c = find_cell(_val);
-	c->prev_cell()->next_cell(c->next_cell());
-	c->next_cell()->prev_cell(c->prev_cell());
+	if (c != head) {
+		c->prev_cell()->next_cell(c->next_cell());
+		c->next_cell()->prev_cell(c->prev_cell());
+	}
+
+	if (c == head) {
+		if (c->next_cell() == NULL)
+			head = NULL;
+		else
+			c->next_cell()->prev_cell(NULL);
+			head = c->next_cell();
+	}
 	delete c;
 
 	return 0;
@@ -104,8 +114,12 @@ Cell* DoublyLinkedList::find_cell(int _val) {
 void DoublyLinkedList::print_all() {
 	Cell* c = head;
 	while(1) {
-		cerr << c->get_data() << endl;
-		if ( !c->next_cell() )
+		if (c)
+			cerr << c->get_data() << endl;
+		else
+			break;
+
+		if (!c->next_cell())
 			break;
 		c = c->next_cell();
 	}
