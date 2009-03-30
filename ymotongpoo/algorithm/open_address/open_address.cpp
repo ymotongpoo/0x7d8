@@ -5,6 +5,7 @@ void OpenAddress::insert_data(std::string _data) {
 	DictionaryIter itr = hash_list.find(key);
 	if (itr != hash_list.end())
 		key = rehash_function(_data);
+
 	hash_list.insert( Dictionary::value_type(key, _data) );
 }
 
@@ -33,11 +34,16 @@ int OpenAddress::hash_function(std::string _data) {
 }
 
 int OpenAddress::rehash_function(std::string _data) {
-	int _hash_val = hash_function(_data);
+	int _hash_val = hash_function(_data) + HASH_DIV;
 	DictionaryIter itr = hash_list.begin();
-	for (int i = 0; itr != hash_list.end(); i++) {
+	int i = 0;
+	while(1) {
 		itr = hash_list.find(_hash_val);
-		_hash_val += HASH_DIV*i;
+		if (itr == hash_list.end())
+			break;
+
+		_hash_val += HASH_DIV*(i+1);
+		i++;
 	}
 
 	return _hash_val;
