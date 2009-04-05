@@ -4,12 +4,14 @@
 #include <iostream>
 #include <vector>
 
+static const int SHELL_SORT_INTERVAL = 3;
+
 class Sort {
 public:
 	static void bubble_sort(std::vector<int>& _source);
 	static void selection_sort(std::vector<int>& _source);
 	static void insertion_sort(std::vector<int>& _source);
-	static void shell_sort(std::vector<int>& _soruce);
+	static void shell_sort(std::vector<int>& _source, int _interval);
 	static void merge_sort(std::vector<int>& _source);
 	static void heap_sort(std::vector<int>& _source);
 	static void quick_sort(std::vector<int>& _source);
@@ -20,6 +22,8 @@ public:
 	static void comb_sort(std::vector<int>& _source);
 	static void gnome_sort(std::vector<int>& _source);
 	static void odd_even_transportation_sort(std::vector<int>& _source);
+private:
+	static void make_heap_structure(std::vector<int>& _source);
 };
 
 #endif

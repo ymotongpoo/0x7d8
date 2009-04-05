@@ -18,8 +18,9 @@ int main() {
 	}
 
 	//Sort::bubble_sort(source);
+	//Sort::selection_sort(source);
 	//Sort::insertion_sort(source);
-	Sort::selection_sort(source);
+	Sort::shell_sort(source, SHELL_SORT_INTERVAL);
 
 	std::cerr << "----- result -----" << std::endl;
 	for (int i = 0; i < 20; i++) {

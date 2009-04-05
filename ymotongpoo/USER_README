@@ -45,3 +45,13 @@ Pythonの練習のためにShellコマンドをPythonで実装してみる
 - はてなハイク（Twitter APIの実装部分終了）
 - mixi (WSSE認証を用いたAtom API用のクラスも）
 
+4. mixi download
+mixiの日記をダウンロードするスクリプトです。
+初めてまったく見ず知らずの人に頼まれて作ったものかも。
+
+5. wisesaw
+TwitterのBot「名言集.com」です。
+名言集.comのランダム表示機能を利用しています。
+
+6. algorithm
+会社の同期との勉強会で作成したソースを載せています。
