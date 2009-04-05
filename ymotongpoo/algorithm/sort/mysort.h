@@ -23,6 +23,8 @@ public:
 	static void gnome_sort(std::vector<int>& _source);
 	static void odd_even_transportation_sort(std::vector<int>& _source);
 private:
+	static void partial_quick_sort(std::vector<int>& _source, int _from, int _to);
+	static int quick_sort_partition(std::vector<int>& _source, int _from, int _to);
 	static void make_heap_structure(std::vector<int>& _source);
 };
 
