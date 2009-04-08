@@ -1,6 +1,10 @@
 #include "mysort.h"
 #include <ctime>
 
+//---------------------------------------------------------
+/**
+ * Implementation of Bubble Sort
+ */
 void Sort::bubble_sort(std::vector<int>& _source) {
 	int length = _source.size();
 
@@ -12,6 +16,10 @@ void Sort::bubble_sort(std::vector<int>& _source) {
 	}
 }
 
+//---------------------------------------------------------
+/**
+ * Implementation of Selection Sort
+ */
 void Sort::selection_sort(std::vector<int>& _source) {
 	int length = _source.size();
 	int min;
@@ -24,6 +32,10 @@ void Sort::selection_sort(std::vector<int>& _source) {
 	}
 }
 
+//---------------------------------------------------------
+/**
+ * Implementation of Insertion Sort
+ */
 void Sort::insertion_sort(std::vector<int>& _source) {
 	int length = _source.size();
 
@@ -34,7 +46,11 @@ void Sort::insertion_sort(std::vector<int>& _source) {
 	}
 }
 
-void Sort::shell_sort(std::vector<int>& _source, int _interval = SHELL_SORT_INTERVAL) {
+//---------------------------------------------------------
+/**
+ * Implementation of Shell Sort
+ */
+void Sort::shell_sort(std::vector<int>& _source, int _interval = Sort::SHELL_SORT_INTERVAL) {
 	int length = _source.size();
 
 	int width;
@@ -48,15 +64,10 @@ void Sort::shell_sort(std::vector<int>& _source, int _interval = SHELL_SORT_INTE
 	}
 }
 
-void Sort::merge_sort(std::vector<int>& _source) {
-	int length = _source.size();
-	std::vector<int> tempv;
-}
-
-void Sort::heap_sort(std::vector<int>& _source) {
-
-}
-
+//---------------------------------------------------------
+/**
+ * Implementation of Quick Sort
+ */
 void Sort::quick_sort(std::vector<int>& _source) {
 	int length = _source.size();
 
@@ -70,7 +81,7 @@ void Sort::partial_quick_sort(std::vector<int>& _source, int _from, int _to) {
 	int v = quick_sort_partition(_source, _from, _to);
 
 	partial_quick_sort(_source, _from, v-1);
-	partial_quick_sort(_source, v+1, _to);	
+	partial_quick_sort(_source, v+1, _to);
 }
 
 int Sort::quick_sort_partition(std::vector<int>& _source, int _from, int _to) {
@@ -81,7 +92,7 @@ int Sort::quick_sort_partition(std::vector<int>& _source, int _from, int _to) {
 	while (1) {
 		while(_source[++i] < pivot);
 		while(i < --j && pivot < _source[j]);
-		
+
 		if (i >= j)
 			break;
 
@@ -91,6 +102,41 @@ int Sort::quick_sort_partition(std::vector<int>& _source, int _from, int _to) {
 	std::swap(_source[i], _source[_to]);
 
 	return i;
+}
+
+//---------------------------------------------------------
+/**
+ * Implementation of Merge Sort
+ */
+void Sort::merge_sort(std::vector<int>& _source) {
+	int length = _source.size();
+	if (length > 1) {
+		int mid = length/2;
+		std::vector<int> former, latter, result;
+
+		std::copy( _source.begin(), _source.begin() + mid, std::back_inserter(former) );
+		std::copy( _source.begin() + mid, _source.end(), std::back_inserter(latter) );
+
+		merge_sort(former);
+		merge_sort(latter);
+
+		merge_sort_partial_merge(former, latter, result)
+	}
+}
+
+void Sort::merge_sort_partial_merge(std::vector<int>& _source1,
+									std::vector<int>& _source2,
+									std::vector<int>& _result) {
+	int i = 0, j = 0;
+	int length1 = _source1.size();
+	int length2 = _source2.size();
+
+	/// implement some sort algorithm
+}
+
+//---------------------------------------------------------
+void Sort::heap_sort(std::vector<int>& _source) {
+
 }
 
 void Sort::intro_sort(std::vector<int>& _source) {
