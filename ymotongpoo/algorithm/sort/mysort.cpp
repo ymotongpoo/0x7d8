@@ -112,7 +112,7 @@ void Sort::merge_sort(std::vector<int>& _source) {
 	int length = _source.size();
 	if (length > 1) {
 		int mid = length/2;
-		std::vector<int> former, latter, result;
+		std::vector<int> former, latter;
 
 		std::copy( _source.begin(), _source.begin() + mid, std::back_inserter(former) );
 		std::copy( _source.begin() + mid, _source.end(), std::back_inserter(latter) );
@@ -120,20 +120,44 @@ void Sort::merge_sort(std::vector<int>& _source) {
 		merge_sort(former);
 		merge_sort(latter);
 
-		merge_sort_partial_merge(former, latter, result)
+		merge_sort_partial_merge(former, latter, _source);
 	}
 }
 
-void Sort::merge_sort_partial_merge(std::vector<int>& _source1,
-									std::vector<int>& _source2,
-									std::vector<int>& _result) {
+void Sort::merge_sort_partial_merge(std::vector<int>& _former,
+									std::vector<int>& _latter,
+									std::vector<int>& _source) {
+	int length1 = _former.size();
+	int length2 = _latter.size();
 	int i = 0, j = 0;
-	int length1 = _source1.size();
-	int length2 = _source2.size();
 
 	/// implement some sort algorithm
-}
+	int idx = 0;
+	while (i < length1 && j < length2) {
+		if (_former[i] < _latter[j]) {
+			_source[idx] = _former[i];
+			i++;
+		}
+		else {
+			_source[idx] = _latter[j];
+			j++;
+		}
+		idx++;
+	}
 
+	if (i < length1) {
+		for (int k = i; k < length1; k++) {
+			_source[idx] = _former[k];
+			idx++;
+		}
+	}
+	else {
+		for (int k = j; k < length2; k++) {
+			_source[idx] = _latter[k];
+			idx++;
+		}
+	}
+}
 //---------------------------------------------------------
 void Sort::heap_sort(std::vector<int>& _source) {
 
