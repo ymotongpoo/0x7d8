@@ -159,10 +159,33 @@ void Sort::merge_sort_partial_merge(std::vector<int>& _former,
 	}
 }
 //---------------------------------------------------------
+/**
+ * Implementation of Merge Sort
+ */
 void Sort::heap_sort(std::vector<int>& _source) {
+	int length = _source.size();
+	
+	int leaf = length;
+	int root = length/2;
+
+	while (root > 0) {
+		heap_sort_downheap(_source, leaf, root);
+		root--;
+	}
+	
+	while (leaf > 0) {
+		std::swap(_source, 1, leaf);
+		leaf--;
+		heap_sort_downheap(_source, leaf, 1);
+	}
+	
+}
+
+void Sort::heap_sort_downheap(std::vector<int>& _source, int _leaf, int _root) {
 
 }
 
+//---------------------------------------------------------
 void Sort::intro_sort(std::vector<int>& _source) {
 
 }

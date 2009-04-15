@@ -29,6 +29,7 @@ private:
 	static void merge_sort_partial_merge(std::vector<int>& _source1,
 										 std::vector<int>& _source2,
 										 std::vector<int>& _result);
+	static void heap_sort_downheap(std::vector<int>& _source, int _leaf, int _root);
 };
 
 #endif
