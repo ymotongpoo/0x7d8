@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 10
+#define MAX 20
 
 void insert(int table[])
 {
@@ -35,9 +35,8 @@ void shell_sort(int table[], int h)
 	int i, j, s;
 
 	for(; h > 0; h = h / 3){
-		view(table);
-
-		for(i = h; i < MAX; i++){
+		for(i = h; i < MAX; i += h){
+			view(table);
 			j = i;
 			while(j >= 1 && table[j-h] > table[j]){
 				s = table[j];
@@ -61,7 +60,8 @@ int main(int argc, char *argv)
 
 	h = max_interval();
 	//printf("%d", h);
-
+	//return 0;
+	
 	shell_sort(table, h);
 
 	for(i = 0; i < MAX; i++)
