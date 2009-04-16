@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX 100
+#define MAX 10
 
 void insert(int table[])
 {
@@ -11,11 +11,22 @@ void insert(int table[])
 
 }
 
+void view(int table[])
+{
+	int i;
+	for(i = 0; i < MAX; i++)
+		printf("%d ", table[i]);
+
+	printf("\n");
+
+}
+
 void insertion_sort(int table[])
 {
 	int i, j, s;
 
 	for(i = 1; i < MAX; i++){
+		view(table);
 		j = i;
 		while(j >= 1 && table[j-1] > table[j]){
 			s = table[j];
