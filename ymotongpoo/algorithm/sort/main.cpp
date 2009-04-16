@@ -20,9 +20,9 @@ int main() {
 	//Sort::bubble_sort(source);
 	//Sort::selection_sort(source);
 	//Sort::insertion_sort(source);
-	//Sort::shell_sort(source, SHELL_SORT_INTERVAL);
+	Sort::shell_sort(source, Sort::SHELL_SORT_INTERVAL);
 	//Sort::quick_sort(source);
-	Sort::merge_sort(source);
+	//Sort::merge_sort(source);
 
 	std::cerr << "----- result -----" << std::endl;
 	for (int i = 0; i < 20; i++) {

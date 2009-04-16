@@ -54,14 +54,16 @@ void Sort::shell_sort(std::vector<int>& _source, int _interval = Sort::SHELL_SOR
 	int length = _source.size();
 
 	int width;
-	for (width = 1; width < length / _interval; width = _interval*width + 1);
+	for (width = 1; width < length / _interval; width = _interval*width + 1); 
+
 	for (; width > 0; width /= _interval) {
-		for (int i = width; i < length; i++) {
+		for (int i = width; i < length; i += width) {
 			for (int j = i; j >= width && _source[j-width] > _source[j]; j -= width) {
 				std::swap(_source[j-width], _source[j]);
 			}
 		}
 	}
+
 }
 
 //---------------------------------------------------------
@@ -160,11 +162,11 @@ void Sort::merge_sort_partial_merge(std::vector<int>& _former,
 }
 //---------------------------------------------------------
 /**
- * Implementation of Merge Sort
+ * Implementation of Heap Sort
  */
 void Sort::heap_sort(std::vector<int>& _source) {
 	int length = _source.size();
-	
+
 	int leaf = length;
 	int root = length/2;
 
@@ -172,14 +174,15 @@ void Sort::heap_sort(std::vector<int>& _source) {
 		heap_sort_downheap(_source, leaf, root);
 		root--;
 	}
-	
+
 	while (leaf > 0) {
-		std::swap(_source, 1, leaf);
+		std::swap(_source[1], _source[leaf]);
 		leaf--;
 		heap_sort_downheap(_source, leaf, 1);
 	}
-	
+
 }
+
 
 void Sort::heap_sort_downheap(std::vector<int>& _source, int _leaf, int _root) {
 
