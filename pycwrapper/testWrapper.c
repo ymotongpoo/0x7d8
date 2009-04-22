@@ -1,4 +1,5 @@
 #include "Python.h"
+#include "modsupport.h"
 
 extern int add(int x, int y);
 extern void out(const char* address, const char* name);
