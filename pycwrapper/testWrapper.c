@@ -33,5 +33,5 @@ static PyMethodDef testmethods[] = {
 };
 
 void inittest() {
-	Py_InitModule("test", testmethods);
+	Py_InitModule("testm", testmethods);
 }
