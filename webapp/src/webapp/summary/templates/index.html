@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block main_content %}
+
+<div id="box">
+{% for entry in entries %}
+<div class="entry_div">
+	<h3><a href="{{ entry.url }}">{{ entry.title }}</a></h3>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

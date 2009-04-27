@@ -1,26 +1,41 @@
+# coding:utf-8
 from django.db import models
 from datetime import datetime
 
 # Create your models here.
 
 class Site(models.Model):
-    title = models.CharField(u'ƒTƒCƒgƒ^ƒCƒgƒ‹', max_length=255)
-    url = models.URLField(u'ƒTƒCƒgURL', verify_exists=True)
+    '''
+    ã¾ã¨ã‚ã‚µã‚¤ãƒˆ
+    '''
+    title = models.CharField(u'ã‚µã‚¤ãƒˆã‚¿ã‚¤ãƒˆãƒ«', max_length=255)
+    url = models.URLField(u'ã‚µã‚¤ãƒˆURL', verify_exists=True)
+    
+    def __unicode__(self):
+        return self.title
+    
     class Meta:
         db_table = 'tsite'
-        verbose_name = u'ƒTƒCƒg'
-        verbose_name_plural = u'ƒTƒCƒg'
+        verbose_name = u'ã‚µã‚¤ãƒˆ'
+        verbose_name_plural = u'ã‚µã‚¤ãƒˆ'
         
 class Entry(models.Model):
-    title = models.TextField(u'ƒGƒ“ƒgƒŠƒ^ƒCƒgƒ‹', max_length=1000)
-    url = models.URLField(u'ƒGƒ“ƒgƒŠURL')
-    huser = models.PositiveIntegerField(u'‚Í‚Äƒu”')
-    duser = models.PositiveIntegerField(u'delicious”')
-    buser = models.PositiveIntegerField(u'Buzzurl”')
-    posted = models.DateTimeField(u'“Še“ú', default=datetime.now)
+    '''
+    ã¾ã¨ã‚è¨˜äº‹
+    '''
+    title = models.TextField(u'ã‚¨ãƒ³ãƒˆãƒªã‚¿ã‚¤ãƒˆãƒ«', max_length=1000)
+    url = models.URLField(u'ã‚¨ãƒ³ãƒˆãƒªURL')
+    huser = models.PositiveIntegerField(u'ã¯ã¦ãƒ–æ•°', null=True, blank=True)
+    duser = models.PositiveIntegerField(u'deliciousæ•°', null=True, blank=True)
+    buser = models.PositiveIntegerField(u'Buzzurlæ•°', null=True, blank=True)
+    posted = models.DateTimeField(u'æŠ•ç¨¿æ—¥æ™‚', default=datetime.now)
     site_id = models.ForeignKey(Site)
+    
+    def __unicode__(self):
+        return self.title
+    
     class Meta:
         db_table = 'tentry'
         ordering = ['-posted']
-        verbose_name = u'ƒGƒ“ƒgƒŠ'
-        verbose_name = u'ƒGƒ“ƒgƒŠ'
+        verbose_name = u'ã‚¨ãƒ³ãƒˆãƒª'
+        verbose_name_plural = u'ã‚¨ãƒ³ãƒˆãƒª'
