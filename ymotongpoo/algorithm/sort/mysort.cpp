@@ -56,6 +56,11 @@ void Sort::shell_sort(std::vector<int>& _source, int _interval = Sort::SHELL_SOR
 	int width;
 	for (width = 1; width < length / _interval; width = _interval*width + 1); 
 
+	/*
+	 * The basis is insertion sort
+	 * 1. Do insertion sort for every other width element
+	 * 2. Narrow width
+	 */
 	for (; width > 0; width /= _interval) {
 		for (int i = width; i < length; i += width) {
 			for (int j = i; j >= width && _source[j-width] > _source[j]; j -= width) {
@@ -91,6 +96,15 @@ int Sort::quick_sort_partition(std::vector<int>& _source, int _from, int _to) {
 	int i = _from - 1;
 	int j = _to;
 
+	/*
+	 * 1. seek start point of i
+	 * 2. decrease j until pivot > _source[j]
+	 * 3. swap s[i] and s[j]
+	 * 4. restart increasing i
+	 *
+	 * Point 1: set pivot value as rightest number
+	 * Point 2: start i, j from the opposite side
+	 */
 	while (1) {
 		while(_source[++i] < pivot);
 		while(i < --j && pivot < _source[j]);
