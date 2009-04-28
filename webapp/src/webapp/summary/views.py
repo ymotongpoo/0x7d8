@@ -8,6 +8,7 @@ Created on 2009/04/27
 from django.http import HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
+from django.core.paginator import Paginator
 
 from models import Site, Entry
 
@@ -17,7 +18,11 @@ def index(request):
                               {'entries':entries})
 
 def updated(request, offset):
-    pass
+    entries = Entry.objects.all().order_by('-posted')
+    paginator = Paginator(entries, 10)
+
+    return render_to_response('updated.html',
+                              {'entries':paginator.page(1).object_list})
 
 def hot(request, offset):
     pass
