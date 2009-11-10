@@ -55,7 +55,7 @@ import time
 from datetime import date, timedelta
 
 
-ATND_URL='http://api.atnd.org/events/?format=json&user_id=%s&ym=%s'
+ATND_URL='http://api.atnd.org/events/?format=json&user_id=%s&ym=%s&count=50'
 ENCODING='utf-8'
 DECODING='utf-8'
 TIME_FORMAT = '%Y-%m-%dT%H:%M:%S+09:00'
