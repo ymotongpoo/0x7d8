@@ -23,8 +23,8 @@ from wisesaw import ProcessWisesaw
 
 from google.appengine.ext import webapp
 
-username = 'hoge'
-password = 'fuga'
+username = 'wisesaw'
+password = 'wisesaw2009'
 
 class MainHandler(webapp.RequestHandler):
 

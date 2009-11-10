@@ -7,7 +7,10 @@ class Node {
 private:
 	Node* left;
 	Node* right;
+	Node* parent;
+	int data;
 public:
+	Node();
 	int SetChild(Node* child);
 };
 
@@ -16,6 +19,6 @@ private:
 	Node* root;
 public:
 	Node* GetRoot() { return this->root; };
-}
+};
 
 #endif

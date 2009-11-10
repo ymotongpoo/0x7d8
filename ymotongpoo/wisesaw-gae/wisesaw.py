@@ -86,8 +86,6 @@ class ProcessWisesaw():
 
         except HTMLParseError, msg:
             print 'HTMLParseError:', msg
-            process(username, password)
 
         except Exception, e:
             print e
-            process(username, password)
