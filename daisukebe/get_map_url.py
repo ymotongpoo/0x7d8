@@ -5,11 +5,7 @@ import urllib
 from BeautifulSoup import BeautifulSoup
 
 def get_maps_url(address):
-    url_list = ['http://maps.google.co.jp/maps?q=' + a + \
-                    '&um=1&ie=UTF-8&hq=&hnear=' + a +\
-                    '&gl=jp&ei=mcf-SoSJJY-pkAXv-OXuCw&sa=\
-X&oi=geocode_result&ct=title&resnum=1&ved=0CAgQ8gEwAA'
-                for a in address]
+    url_list = ['http://maps.google.co.jp/maps?q=' + a for a in address]
 
     return url_list
 
@@ -38,8 +34,7 @@ def get_store_address(soup):
 def main(*argv):
     b = {'key_word': (u'三宮'.encode('shift-jis'))}
     url = 'http://www.sevenbank.co.jp/www-cgi/a012.php?sub_option=&'\
-        + urllib.urlencode(b) + '&area_code=&qzip=&sql_flg=1&\
-fst_store_csol=&store_cnt=1&city_code='
+        + urllib.urlencode(b) + '&area_code=&qzip=&sql_flg=1&fst_store_csol=&store_cnt=1&city_code='
 
     html = urllib.urlopen(url).read()
     soup = BeautifulSoup(html)
