@@ -38,7 +38,7 @@ ENCODING = 'utf-8'
 DECODING = 'utf-8'
 TWTR_API = 'http://twitter.com/statuses/user_timeline/%s.json?since_id=%s'
 TWTR_TIME_FORMAT = '%a %b %d %H:%M:%S +0000 %Y'
-LOG_TIME_FORMAT  = '%Y-%M-%ST%H:%M:%S'
+LOG_TIME_FORMAT  = '%Y-%m-%dT%H:%M:%S'
 SEPARATOR = '\t'
 
 
@@ -48,6 +48,23 @@ def convert_jst(created_at):
                   st.tm_hour, st.tm_min, st.tm_sec)
     lt = gt + timedelta(hours=9)
     return lt.strftime(LOG_TIME_FORMAT)
+
+
+def json2list(data):
+    tweets = [t for t in json.loads(data)]
+
+    timeline = []
+    for tweet in tweets:
+        created_at = convert_jst(tweet['created_at'])
+        
+        tweet = [str(tweet['id']), 
+                 tweet['text'].encode(ENCODING), 
+                 created_at, 
+                 tweet['in_reply_to_status_id']]
+
+        timeline.append(tweet)
+    
+    return timeline
 
 
 def process(user_id, logdir):
@@ -63,13 +80,7 @@ def process(user_id, logdir):
     url = TWTR_API % (user_id, since_id)
     p = urllib.urlopen(url)
     data = p.read().decode(DECODING)
-    tweets = [t for t in json.loads(data)]
-
-    timeline = []
-    for tweet in tweets:
-        created_at = convert_jst(tweet['created_at'])
-        tweet = [str(tweet['id']), tweet['text'].encode(ENCODING), created_at]
-        timeline.append(tweet)
+    timeline = json2list(data)
     
     timeline.sort()
     
