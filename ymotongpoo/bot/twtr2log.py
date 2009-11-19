@@ -60,7 +60,8 @@ def json2list(data):
         tweet = [str(tweet['id']), 
                  tweet['text'].encode(ENCODING), 
                  created_at, 
-                 str(tweet['in_reply_to_status_id'])]
+                 str(tweet['in_reply_to_status_id']),
+                 tweet['in_reply_to_user_id']]
 
         timeline.append(tweet)
     
