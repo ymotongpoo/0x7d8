@@ -103,7 +103,7 @@ def log2content(filename, log_path='.'):
 
         screenname = u''
         if in_reply_to_user_id:
-            if in_reply_to_user in user_dict.keys():
+            if in_reply_to_user_id in user_dict.keys():
                 screenname = user_dict[in_reply_to_user_id]
             else:
                 p = urllib.urlopen(USERID_URL % in_reply_to_user_id)
@@ -113,6 +113,7 @@ def log2content(filename, log_path='.'):
                 
             url = STATUS_URL % (screenname, in_reply_to_status_id)
             fixed += u' (in reply to <a href="%s">%s</a>)' % (url, screenname)
+
         return fixed
     
     log = path.join(log_path, filename)
