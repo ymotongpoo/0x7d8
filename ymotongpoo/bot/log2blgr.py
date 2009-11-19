@@ -4,6 +4,7 @@
 #
 # external packages
 #   - gdata-python-client
+#   - simplejson (for Python 2.5 or earlier)
 #
 # API reference
 # 1. Google Data API Python Client Library
@@ -24,6 +25,11 @@ from gdata.blogger import client
 import gdata
 import atom
 
+try:
+    import simplejson as json
+except:
+    import json
+
 from datetime import datetime, timedelta
 import re
 import sys
@@ -35,6 +41,7 @@ LOG_TIME_FMT = '%Y-%m-%dT%H:%M:%S'
 TIME_FMT = '%H:%M:%S'
 TWITER_ID = 'ymotongpoo'
 STATUS_URL = 'http://twitter.com/%s/statuses/%s'
+USERID_URL = 'http://twitter.com/users/show.json/user_id=%s'
 
 DECODING = 'utf-8'
 ENCODING = 'utf-8'
@@ -70,6 +77,8 @@ class BloggerOperator:
 
 
 def log2content(filename, log_path='.'):
+    user_dict = dict()
+
     def format_time(timestr, id):
         time = datetime.strptime(timestr, LOG_TIME_FMT)
         status_url = STATUS_URL % (TWITER_ID, id)
@@ -84,7 +93,7 @@ def log2content(filename, log_path='.'):
             fixed = fixed.replace(u, link)
         return fixed
 
-    def format_reply(text, in_reply_to_id, in_reply_to_user):
+    def format_reply(text, in_reply_to_status_id, in_reply_to_user_id):
         replies = re.findall(r"@[_a-zA-Z0-9]]+", text)
         fixed = text
         for r in replies:
@@ -92,9 +101,18 @@ def log2content(filename, log_path='.'):
             link = u'<a href="http://twitter.com/%s">%s</a>' % (user, r)
             fixed = fixed.replace(r, link)
 
-        if in_reply_to_id:
-            url = STATUS_URL % (in_reply_to_user, in_reply_to_id)
-            fixed += u' (in reply to <a href="%s">%s</a>)' % (url, in_reply_to_user)
+        screenname = u''
+        if in_reply_to_user_id:
+            if in_reply_to_user in user_dict.keys():
+                screenname = user_dict[in_reply_to_user_id]
+            else:
+                p = urllib.urlopen(USERID_URL % in_reply_to_user_id)
+                ud = json.loads(p.read().decode(DECODING))
+                screenname = ud[u'screen_name']
+                user_dict[in_reply_to_user_id] = screenname
+                
+            url = STATUS_URL % (screenname, in_reply_to_status_id)
+            fixed += u' (in reply to <a href="%s">%s</a>)' % (url, screenname)
         return fixed
     
     log = path.join(log_path, filename)
@@ -107,7 +125,7 @@ def log2content(filename, log_path='.'):
         content = l.split('\t')
         id = content[0]
         tweet = format_link(content[1])
-        #tweet = format_reply(tweet, content[3])
+        tweet = format_reply(tweet, content[3])
         time_str = format_time(content[2], id)
         item = '<li>%s : %s</li>' % (time_str, tweet)
         tweets += item

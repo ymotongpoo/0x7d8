@@ -53,6 +53,8 @@ def convert_jst(created_at):
 def json2list(data):
     tweets = [t for t in json.loads(data)]
 
+    none2blank = lambda t : str(t) if t is not None else u''
+
     timeline = []
     for tweet in tweets:
         created_at = convert_jst(tweet['created_at'])
@@ -60,8 +62,8 @@ def json2list(data):
         tweet = [str(tweet['id']), 
                  tweet['text'].encode(ENCODING), 
                  created_at, 
-                 str(tweet['in_reply_to_status_id']),
-                 tweet['in_reply_to_user_id']]
+                 none2blank(tweet['in_reply_to_status_id']),
+                 none2blank(tweet['in_reply_to_user_id'])]
 
         timeline.append(tweet)
     
