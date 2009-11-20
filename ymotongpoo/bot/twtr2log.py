@@ -89,6 +89,7 @@ def process(user_id, logdir):
     
     f = open(logpath, 'a')
     for t in timeline:
+        print t
         line = SEPARATOR.join(t) + '\n'
         f.write(line)
     
