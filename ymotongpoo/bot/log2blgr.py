@@ -11,13 +11,12 @@
 #   http://code.google.com/p/gdata-python-client/
 #
 # ToDo
-#   1. create in-reply-to link -- version 1.0
-#   2. retrieve original urls from shorten ones -- version 1.1
-#   3. get conversations -- version 2.0
+#   1. retrieve original urls from shorten ones -- version 1.1
+#   2. get conversations -- version 2.0
 #
 
 __author__  = 'ymotongpoo <ymotongpoo AT gmail DOT com>'
-__version__ = '0.9'
+__version__ = '1.0'
 __date__    = '2009/11/19 (Thu)'
 
 from gdata import service, client
@@ -30,6 +29,7 @@ try:
 except:
     import json
 
+import urllib
 from datetime import datetime, timedelta
 import re
 import sys
@@ -41,7 +41,7 @@ LOG_TIME_FMT = '%Y-%m-%dT%H:%M:%S'
 TIME_FMT = '%H:%M:%S'
 TWITER_ID = 'ymotongpoo'
 STATUS_URL = 'http://twitter.com/%s/statuses/%s'
-USERID_URL = 'http://twitter.com/users/show.json/user_id=%s'
+USERID_URL = 'http://twitter.com/users/show.json?user_id=%s'
 
 DECODING = 'utf-8'
 ENCODING = 'utf-8'
@@ -96,23 +96,31 @@ def log2content(filename, log_path='.'):
     def format_reply(text, in_reply_to_status_id, in_reply_to_user_id):
         replies = re.findall(r"@[_a-zA-Z0-9]]+", text)
         fixed = text
+
+        nullcheck = lambda x : False if len(x.strip()) == 0 or x is None else True
+        
         for r in replies:
             user = r.spilt('@').pop()
             link = u'<a href="http://twitter.com/%s">%s</a>' % (user, r)
             fixed = fixed.replace(r, link)
 
         screenname = u''
-        if in_reply_to_user_id:
-            if in_reply_to_user in user_dict.keys():
+        if nullcheck(in_reply_to_user_id) and nullcheck(in_reply_to_status_id): 
+            if in_reply_to_user_id in user_dict.keys():
                 screenname = user_dict[in_reply_to_user_id]
             else:
-                p = urllib.urlopen(USERID_URL % in_reply_to_user_id)
-                ud = json.loads(p.read().decode(DECODING))
-                screenname = ud[u'screen_name']
-                user_dict[in_reply_to_user_id] = screenname
-                
+                try:
+                    url = USERID_URL % in_reply_to_user_id
+                    p = urllib.urlopen(url)
+                    data = p.read().decode(DECODING)
+                    ud = json.loads(data)
+                    screenname = ud[u'screen_name']
+                    user_dict[in_reply_to_user_id] = screenname
+                except:
+                    pass
+            
             url = STATUS_URL % (screenname, in_reply_to_status_id)
-            fixed += u' (in reply to <a href="%s">%s</a>)' % (url, screenname)
+            fixed += u' (in reply to <a href="%s">@%s</a>)' % (url, screenname)
         return fixed
     
     log = path.join(log_path, filename)
@@ -125,7 +133,7 @@ def log2content(filename, log_path='.'):
         content = l.split('\t')
         id = content[0]
         tweet = format_link(content[1])
-        tweet = format_reply(tweet, content[3])
+        tweet = format_reply(tweet, content[3], content[4])
         time_str = format_time(content[2], id)
         item = '<li>%s : %s</li>' % (time_str, tweet)
         tweets += item
@@ -175,6 +183,6 @@ if __name__=='__main__':
         
             process(email, password, title, content)
         except Exception, e:
-            print e
+            print Exception, e
             sys.exit(2)
 
