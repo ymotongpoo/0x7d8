@@ -35,6 +35,7 @@ from pit import Pit
 TWTR_TIME_FORMAT = '%a %b %d %H:%M:%S +0000 %Y'
 INTERVAL = 90
 DECODING = 'utf-8'
+APPNAME  = 'pytwtrmgmttool'
 
 following_url = 'http://twitter.com/statuses/friends.json'
 unfollow_url  = 'http://twitter.com/friendships/destroy/%s.json'
@@ -134,7 +135,13 @@ class TwitterClass:
 
 
 if __name__ == '__main__':
-    oauth_keys = Pit.get('pytwtrmgmttool')
+    appname = APPNAME
+    oauth_keys = Pit.get( appname, {'require' : {
+                'consumer_key' : 'Your consumer_key from web',
+                'consumer_secret' : 'Your consumer_secret from web'
+                'access_token' : 'Your access_token from accsess_token.py'
+                'access_token_secret' : 'Your access_token_secret from accsess_token.py'
+                }})
     ckey    = oauth_keys['consumer_key']
     csecret = oauth_keys['consumer_secret']
     atoken  = oauth_keys['access_token']
