@@ -121,7 +121,7 @@ if __name__ == '__main__':
                     'pass'  : 'password for Google account'
                     }})
         
-        yesterday = datetime.today() - timedelta(days=9)
+        yesterday = datetime.today() - timedelta(days=1)
                 
         process(daccount['user'], daccount['pass'], yesterday, 
                 gaccount['email'], gaccount['pass'])
