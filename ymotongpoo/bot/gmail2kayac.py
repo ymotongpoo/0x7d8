@@ -13,6 +13,10 @@
 #   http://im.kayac.com
 #
 
+__author__  = 'ymotongpoo <ymotongpoo AT gmail DOT com>'
+__version__ = '0.1'
+__date__    = '2009/12/09 (Wed)'
+
 import sys
 import urllib
 from pit import Pit
