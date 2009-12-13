@@ -38,6 +38,7 @@ TITLE = '[Delicious] %s'
 ENCODING = 'utf-8'
 DECODING = 'utf-8'
 DELICIOUS_FORMAT = '%Y-%m-%d'
+DATE_OFFSET = 2
 
 class BloggerOperator:
     def __init__(self, email=None, password=None):
@@ -121,9 +122,9 @@ if __name__ == '__main__':
                     'pass'  : 'password for Google account'
                     }})
         
-        yesterday = datetime.today() - timedelta(days=1)
+        target_date = datetime.today() - timedelta(days=DATE_OFFSET)
                 
-        process(daccount['user'], daccount['pass'], yesterday, 
+        process(daccount['user'], daccount['pass'], target_date, 
                 gaccount['email'], gaccount['pass'])
     except Exception, e:
         print 'error -> ', Exception, e
