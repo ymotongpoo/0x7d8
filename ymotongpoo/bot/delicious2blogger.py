@@ -106,7 +106,7 @@ def process(duser, dpass, date, gemail, gpass):
         blgr.ClientLogin()
         blgr.CreatePublicPost(title, content)
     else:
-        print date + ' : no posts'
+        print date.strftime(DELICIOUS_FORMAT) + ' : no posts'
 
 
 if __name__ == '__main__':
