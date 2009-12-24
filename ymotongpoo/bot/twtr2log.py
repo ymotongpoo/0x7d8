@@ -32,7 +32,7 @@ from datetime import date, timedelta, datetime
 from os import path
 import sys
 import getopt
-
+import string
 
 ENCODING = 'utf-8'
 DECODING = 'utf-8'
@@ -60,7 +60,7 @@ def json2list(data):
         created_at = convert_jst(tweet['created_at'])
         
         tweet = [str(tweet['id']), 
-                 tweet['text'].encode(ENCODING), 
+                 string.replace(tweet['text'].encode(ENCODING), '\n', ' '), 
                  created_at, 
                  none2blank(tweet['in_reply_to_status_id']),
                  none2blank(tweet['in_reply_to_user_id'])]
