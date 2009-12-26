@@ -16,8 +16,8 @@
 #
 
 __author__  = 'ymotongpoo <ymotongpoo AT gmail DOT com>'
-__version__ = '1.0'
-__date__    = '2009/11/11 (Wed)'
+__version__ = '1.1'
+__date__    = '2009/12/26 (Sat)'
 
 # for Web service
 import urllib
@@ -63,7 +63,9 @@ def json2list(data):
                  string.replace(tweet['text'].encode(ENCODING), '\n', ' '), 
                  created_at, 
                  none2blank(tweet['in_reply_to_status_id']),
-                 none2blank(tweet['in_reply_to_user_id'])]
+                 none2blank(tweet['in_reply_to_user_id']),
+                 none2blank(tweet['location'])
+                 ]
 
         timeline.append(tweet)
     
