@@ -31,6 +31,6 @@ static PyMethodDef testmmethods[] = {
 	{NULL},
 };
 
-void inittest() {
+void inittestm() {
 	Py_InitModule("testm", testmmethods);
 }
