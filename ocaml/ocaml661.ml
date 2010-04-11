@@ -183,12 +183,78 @@ let rec expand = function
   | Add (m, n) 
     -> Add (expand m, expand n)
   | Mul (Add (m, n), Add (m', n'))
-    -> Add (Add (expand (Mul (m, m')), expand (Mul(m, n'))), 
+    -> Add (Add (expand (Mul (m, m')), expand (Mul (m, n'))), 
             Add (expand (Mul (n, m')), expand (Mul (n, n'))))
   | Mul (m, n) -> Mul (expand m, expand n)
 ;;
 
     
-    
+(* Exercise 8 *)
+let labels = [1; 2; 3; 4];;
+
+let create_tree l =
+  let rec create_tree ret l =
+    let rec add t x =
+      match t with
+      | Lf -> Br (x, Lf, Lf)
+      | Br (y, left, right) ->
+          match y with
+          | y when y = x -> Br (y, left, right)
+          | y when y < x -> Br (y, left, add right x)
+          | _ -> Br (y, add left x, right)
+    in
+    match l with
+    | [] -> ret
+    | x::xs -> create_tree (add ret x) xs
+  in
+  create_tree Lf l
+;;
 
 
+let permutation l =
+  let rec perm n xs a b = 
+    let remove x xs = List.filter (fun y -> x <> y) xs in
+    if n = 0 then a::b
+    else List.fold_right (fun x y -> perm (n-1) (remove x xs) (x::a) y) xs b
+  in
+  perm (List.length l) l [] []
+;;
+
+
+let del_dup l = 
+  let rec del_dup rst = function
+    | [] -> rst
+    | x::xs -> del_dup (x :: List.filter (fun y -> y <> x) rst) xs
+  in
+  del_dup l l
+;;
+
+del_dup (map create_tree (permutation [1;2;3;4]));;
+
+
+(* Exercise 9 *)
+
+type 'a seq = Cons of 'a * (unit -> 'a seq);;
+
+let head (Cons (x, _)) = x;;
+let tail (Cons (_, f)) = f ();;
+let rec take n s =
+  if n = 0 then [] else head s :: take (n-1) (tail s);;
+
+let rec from n = Cons (n, fun () -> from (n+1));;
+
+let rec sift n (Cons (x, f)) =
+  if (x mod n) = 0 then sift n (f ())
+  else Cons (x, fun () -> sift n (f ()))
+;;
+
+let rec sieve (Cons (x, f)) = Cons (x, fun () -> sieve (sift x (f ())));;
+
+let primes = sieve (from 2);;
+
+let rec nthseq n (Cons (x, f)) =
+  if n = 1 then x
+  else nthseq (n-1) (f())
+;;
+
+print_int (nthseq 9999 primes);;
