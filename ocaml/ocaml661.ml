@@ -257,4 +257,47 @@ let rec nthseq n (Cons (x, f)) =
   else nthseq (n-1) (f())
 ;;
 
-print_int (nthseq 9999 primes);;
+(* print_int (nthseq 9999 primes);; *)
+
+
+(* Exercise 10 *)
+type ('a, 'b) sum = Left of 'a | Right of 'b;;
+
+(* 1. val : 'a * ('b, 'c) sum -> ('a * 'b, 'a * 'c) sum *)
+let expand_sum (x, y) =
+  match y with
+  | Left l -> Left (x, l)
+  | Right r -> Right (x, r)
+;;
+
+
+(* 2. val: ('a, 'b) sum * ('c, 'd) sum -> 
+   (('a * 'c, 'b * 'd) sum, ('a * 'd, 'b * 'c) sum) sum *)
+let cross_sum (x, y) =
+  match x, y with
+  | Left xl, Left yl -> Left (Left (xl, yl))
+  | Left xl, Right yr -> Right (Left (xl, yr))
+  | Right xr, Left yl -> Right (Right (xr, yl))
+  | Right xr, Right yr -> Left (Right (xr, yr))
+;;
+
+(* 3. val: ('a -> 'b) * ('c -> 'b) -> ('a, 'c) sum -> 'b *)
+let merge_sum (fl, fr) = function
+  | Left l -> fl l
+  | Right r -> fr r
+;;
+
+(* 4. val: (('a, 'b) sum -> 'c) -> ('a -> 'c) * ('b -> 'c) *)
+let fun_tuple f c =
+  match f with
+  | Left fl -> (fl c, None)
+  | Right fr -> (None, fr c)
+;;
+
+(* 5. val: ('a -> 'b, 'a -> 'c) sum -> ('a -> ('b,'c) sum) *)  
+let func_sum f a = 
+  match f with
+  | Left fl -> Left (fl a)
+  | Right fr -> Right (fr a)
+;;
+
