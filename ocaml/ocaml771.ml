@@ -41,3 +41,57 @@ let fact = function
   | n when n < 0 -> raise (Invalid_argument (string_of_int n))
   | n -> fact_imp n
 ;;
+
+
+(* Exercise 7 *)
+(*
+type color = Blue | Red | Green | White;;
+type cpointI = 
+    {cget: unit -> int;
+     cset: int -> unit;
+     cinc: unit -> unit;
+     getcolor: unit -> color};;
+
+type pointI =
+    {get: unit -> int;
+     set: int -> unit;
+     inc: unit -> unit;};;
+
+let pointC x this () =
+  {get = (fun () -> !x);
+   set = (fun newx -> x := newx);
+   inc = (fun () -> (this ()).set ((this ()).get () + 1))}
+;;
+
+let new_point x =
+  let x = ref x in
+  let rec this () = pointC x this () in
+  this ()
+;;
+
+let cpointC x col =
+  let rec x = ref x in
+  let rec this () =
+    {cget = super.get;
+     cset = (fun x -> super.set x; col := White);
+     cinc = super.inc;
+     getcolor = (fun () -> !col)}
+  in
+  this ()
+;;
+*)
+
+(* Exercise 9 *)
+(*
+pervasives.mliを参照
+
+val stdout : out_channel
+(** The standard output for the process. *)
+
+val output_string : out_channel -> string -> unit
+(** Write the string on the given output channel. *)
+*)
+let print_int' = output_string stdout string_of_int;;
+
+(* Exercise 10 *)
+let cp fromfn tofn = hoge;;
