@@ -91,7 +91,29 @@ val stdout : out_channel
 val output_string : out_channel -> string -> unit
 (** Write the string on the given output channel. *)
 *)
-let print_int' = output_string stdout string_of_int;;
+let print_int' x = output_string stdout (string_of_int x);;
 
 (* Exercise 10 *)
-let cp fromfn tofn = hoge;;
+let cp fromfn tofn =
+  let fromfp = open_in_bin fromfn
+  and tofp = open_out_bin tofn in
+  let len = 10 and buf = "" in
+  let rec cp_bin pos = function
+    | End_of_file ->
+        begin
+          close_in fromfp;
+          close_out tofp;
+        end;
+    | _ ->
+        begin
+          let x = really_input fromfp buf pos len in
+          output tofp buf pos len;
+          cp_bin (len+1) x;
+        end;
+  in
+  cp_bin 0 0
+;;
+            
+    
+    
+    
