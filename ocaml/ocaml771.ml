@@ -96,22 +96,32 @@ let print_int' x = output_string stdout (string_of_int x);;
 (* Exercise 10 *)
 let cp fromfn tofn =
   let fromfp = open_in_bin fromfn
-  and tofp = open_out_bin tofn in
-  let len = 10 and buf = "" in
-  let rec cp_bin pos = function
+  and tofp = open_out_bin tofn
+  and len = 1
+  and buf = ref "" in
+  let rec cp_bin pos = 
+    try
+      begin
+        Printf.printf "%d\n" pos;
+        really_input fromfp !buf pos len;
+        output tofp !buf pos len;
+        cp_bin (pos+len);
+      end;
+    with
     | End_of_file ->
         begin
+          print_string "End of file";
           close_in fromfp;
           close_out tofp;
         end;
-    | _ ->
+    | Invalid_argument e ->
         begin
-          let x = really_input fromfp buf pos len in
-          output tofp buf pos len;
-          cp_bin (len+1) x;
+          print_string e;
+          close_in fromfp;
+          close_out tofp;
         end;
   in
-  cp_bin 0 0
+  cp_bin 0
 ;;
             
     
