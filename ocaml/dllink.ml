@@ -180,11 +180,15 @@ module Z : S = struct
 
   let of_list l =
     let t = create () in
-    let rec add_t = function
-      | [] -> t
-      | x::xs -> add_t xs
+    let rec add_t ret = function
+      | [] -> ret
+      | x::xs -> 
+          let t = add ret x in
+          match t.dll with
+          | None -> create ()
+          | Some t' -> add_t t' xs
     in
-    add_t l
+    add_t t l
   ;;
             
 
