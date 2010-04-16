@@ -56,6 +56,10 @@ module type S = sig
   val invariant : 'a t -> unit
     (** Invariant checks *)
 
+  (** validation functions *)
+  val hello : unit -> unit
+  val show_intt : int t -> unit
+
 end 
 
 module Z : S = struct
@@ -84,23 +88,24 @@ module Z : S = struct
   let value n = n.data;;
 
   let add t v =
-    if is_empty t then
-      begin
-        let n = {dll = Some t; data = v; prev = None; next = None} in
-        t.nnode <- 1;
-        t.first <- Some n;
-        t.last  <- Some n;
-        n;
-      end
-    else
-      begin
-        let n = {dll = Some t; data = v; prev = t.last; next = None} in
-        t.nnode <- t.nnode + 1;
-        t.last <- Some n;
-        n;
-      end
+    let n = { dll = Some t; data = v; prev = t.last; next = None } in
+    match t.last with
+    | Some l -> 
+        begin
+          t.nnode <- t.nnode + 1;
+          l.next <- Some n;
+          t.last <- Some n;
+          n;
+        end
+    | None ->
+        begin
+          t.nnode <- t.nnode + 1;
+          t.first <- Some n;
+          t.last  <- Some n;
+          n;
+        end
   ;;
-  
+
   let remove n = 
     match n.dll with
     | None -> `Already_removed
@@ -150,9 +155,13 @@ module Z : S = struct
   let hd t = t.first;;
 
   let iter ~f t =
-    let rec iter_node f = function
+    let rec iter_node ~f = function
       | None -> ()
-      | Some n -> begin f n; iter_node f n.next; end
+      | Some n -> 
+          begin
+            f n;
+            iter_node f n.next;
+          end
     in
     iter_node f t.first
   ;;
@@ -176,7 +185,7 @@ module Z : S = struct
   (** list <=> dllist conversion functions *)    
   let to_nodes l = fold ~f:(fun l n -> n :: l) ~init:[] l;;
 
-  let to_list l = fold ~f:(fun l n -> n.data :: l) ~init:[] l;;
+  let to_list l = fold_rev ~f:(fun l n -> n.data :: l) ~init:[] l;;
 
   let of_list l =
     let t = create () in
@@ -190,9 +199,11 @@ module Z : S = struct
     in
     add_t t l
   ;;
-            
-
+    
   let invariant t = ();;
+
+  let hello () = print_string "hello";;
+  let show_intt t = iter ~f:(fun n -> print_int (value n)) t;;
 
 end 
 
@@ -287,4 +298,4 @@ module Test(Z:S) = struct
 
 end
 
-module Do_test = Test(Z) 
+module Do_test = Test(Z)
