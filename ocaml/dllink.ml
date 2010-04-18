@@ -201,16 +201,8 @@ module Z : S = struct
 
   let of_list l =
     let t = create () in
-    let rec add_t ret = function
-      | [] -> ret
-      | x::xs -> 
-          let t = add ret x in
-          match t.dll with
-          | None -> create ()
-          | Some t' -> add_t t' xs
-    in
-    add_t t l
-  ;;
+    let add_t t' n = begin add t' n; t'; end in
+    List.fold_left (fun ret n -> add_t ret n) t l;;
     
   let invariant t = ();;
 
