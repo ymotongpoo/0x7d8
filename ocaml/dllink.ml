@@ -56,11 +56,6 @@ module type S = sig
   val invariant : 'a t -> unit
     (** Invariant checks *)
 
-  (** validation functions *)
-  val hello : unit -> unit
-  val show_intt : int t -> unit
-  val remove_test : int node option -> unit
-
 end 
 
 module Z : S = struct
@@ -153,17 +148,6 @@ module Z : S = struct
             end
   ;;
 
-  let rec remove_test = function
-    | None -> Printf.printf "None\n"
-    | Some n ->
-        begin
-          let nn = n.next in
-          remove n;
-          Printf.printf "remove %d\n";
-          remove_test nn;
-        end
-  ;;
-
   let hd t = t.first;;
 
   let iter ~f t =
@@ -205,18 +189,6 @@ module Z : S = struct
     List.fold_left (fun ret n -> add_t ret n) t l;;
     
   let invariant t = ();;
-
-  let hello () = print_string "hello";;
-  let show_intt t = iter ~f:(fun n -> print_int (value n)) t;;
-
-  let test n =
-    let rec mklist ret = function
-      | 0 -> ret
-      | n -> mklist (n::ret) (n-1)
-    in
-    let list = mklist [] n in
-    remove_test (hd (of_list list))
-  ;;
 
 end 
 
