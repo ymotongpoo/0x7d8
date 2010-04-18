@@ -31,7 +31,7 @@ module type S = sig
         time.
     *)
 
-  val remove : 'a node -> [ `Already_removed | `Ok | `Fault]
+  val remove : 'a node -> [ `Already_removed | `Ok | `Fault ]
     (** O(1). [remove node] removes [node] from the dllist it belongs to.
         Successful removal returns [`Ok]. If the node is already removed,
         [remove node] returns [`Already_removed]. 
@@ -59,10 +59,12 @@ module type S = sig
   (** validation functions *)
   val hello : unit -> unit
   val show_intt : int t -> unit
+  val remove_test : int node option -> unit
 
 end 
 
 module Z : S = struct
+(* module Z = struct *)
   type 'a t = {
     mutable nnode: int;
     mutable first: 'a node option;
@@ -119,7 +121,7 @@ module Z : S = struct
               let p_ = n.prev and n_ = n.next in
               match p_, n_ with
               | None, None ->
-                  if fst <> lst then `Fault
+                  if fst != lst then `Fault
                   else
                     begin
                       t.first <- None;
@@ -127,7 +129,7 @@ module Z : S = struct
                       `Ok
                     end;
               | Some p', None ->
-                  if n <> lst then `Fault
+                  if n != lst then `Fault
                   else
                     begin
                       t.last  <- Some p';
@@ -135,7 +137,7 @@ module Z : S = struct
                       `Ok;
                     end;
               | None, Some n' ->
-                  if n <> fst then `Fault
+                  if n != fst then `Fault
                   else
                     begin
                       t.first <- Some n';
@@ -150,7 +152,17 @@ module Z : S = struct
                   end;
             end
   ;;
-    
+
+  let rec remove_test = function
+    | None -> Printf.printf "None\n"
+    | Some n ->
+        begin
+          let nn = n.next in
+          remove n;
+          Printf.printf "remove %d\n";
+          remove_test nn;
+        end
+  ;;
 
   let hd t = t.first;;
 
@@ -204,6 +216,15 @@ module Z : S = struct
 
   let hello () = print_string "hello";;
   let show_intt t = iter ~f:(fun n -> print_int (value n)) t;;
+
+  let test n =
+    let rec mklist ret = function
+      | 0 -> ret
+      | n -> mklist (n::ret) (n-1)
+    in
+    let list = mklist [] n in
+    remove_test (hd (of_list list))
+  ;;
 
 end 
 
