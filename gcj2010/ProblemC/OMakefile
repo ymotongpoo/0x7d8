@@ -1,0 +1,13 @@
+FILES[] =
+   snapper
+
+PROGRAM = snapper
+# OCAML_LIBS += 
+# OCAML_CLIBS +=
+OCAML_OTHER_LIBS += str
+# OCAML_LIB_FLAGS +=
+
+.DEFAULT: $(OCamlProgram $(PROGRAM), $(FILES))
+
+clean:
+  rm -f $(filter-proper-targets $(ls R, .))
