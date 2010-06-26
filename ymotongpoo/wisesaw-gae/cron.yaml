@@ -1,4 +1,4 @@
 cron:
 - description: wisesaw twitter bot
   url: /
-  schedule: every 10 minutes
+  schedule: every 30 minutes
