@@ -133,6 +133,9 @@ end = struct
 
 
   (** base store functions *)
+  (**
+     val store ; file_descr -> string -> int -> int -> int -> string -> string
+  *)
   let store sock command key flags exptime msg = 
     let bytes = string_of_int (String.length msg) in
     let query = 
@@ -268,6 +271,84 @@ end = struct
   ;;
 
 end;;
+
+(**
+   http://code.google.com/p/memcached/wiki/MemcacheBinaryProtocol
+*)
+module Bmemcached : sig
+
+  open Unix
+
+  val endline : string
+    (** CRLF *)
+
+  val connect : ?port:int -> string -> file_descr
+    (** connect to memcached with hostname and port *)
+
+  val version : file_descr -> string
+    (** version command *)
+
+  val set : file_descr -> string -> int -> int -> string -> string
+    (** store data. [set sock key flags exptime msg] *)
+
+  val add : file_descr -> string -> int-> int -> string -> string
+    (** store data only if ther server DOESN'T already hold data for
+        the key. [add sock key flags exptime msg]
+    *)
+
+end = struct
+
+  open Unix
+
+  let endline = "\r\n";;
+
+
+  let connect ?(port=11211) hostname = 
+    let sock = socket PF_INET SOCK_STREAM 0 in
+    let host = gethostbyname hostname in
+    connect sock (ADDR_INET (host.h_addr_list.(0), port));
+    sock
+  ;;
+
+
+  (** sock_send : file_descr -> string -> int *)
+  let sock_send sock str =
+    let len = String.length str in
+    send sock str 0 len []
+  ;;
+
+
+  (** sock_recv : ?maxlen:int -> file_descr -> string *)
+  let sock_recv ?(maxlen=1024) sock =
+    let str = String.create maxlen in
+    let recvlen = recv sock str 0 maxlen [] in
+    String.sub str 0 recvlen
+  ;;
+
+
+  (** readline : split string with '\r\n' *)
+  let readlines str =
+    let elexp = Str.regexp "\r\n" in
+    Str.split elexp str
+  ;;
+
+  
+  let version sock =
+    let _ = sock_send sock ("version" ^ endline) in
+    sock_recv ~maxlen:20 sock
+  ;;
+
+
+  (** request *)
+  let request magic opc keylen extlen datat bodylen opaq cas =
+    
+
+
+
+
+  let bits filename = Bitstring.bitstring_of_file filename;;
+
+end
 
 
 
