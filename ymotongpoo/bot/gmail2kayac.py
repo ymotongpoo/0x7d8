@@ -63,15 +63,17 @@ def main():
 
     if int(d.feed.fullcount) == int(gmail['fullcount']):
         sys.exit(0)
-        
+    
     elif int(d.feed.fullcount) > int(gmail['fullcount']):
-        message = 'New Massage in %s@gmail.com' % (gmail['user'],)
-        r = notify(message, kayac['user'], kayac['pass'])
+        for e in d.entries:
+            title = e.title
+            author = e.author
+            message = '%s <%s> [%s@gmail.com]' % (title, author, gmail['user'])
+            r = notify(message, kayac['user'], kayac['pass'])
 
         if r['result'] != 'posted':
             print 'failed', r
             sys.exit(2)
-
 
     Pit.set('gmail', {'data' : {
                 'user' : gmail['user'],

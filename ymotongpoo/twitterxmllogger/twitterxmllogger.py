@@ -6,10 +6,10 @@
 # Yoshifumi YAMAGUCHI @ymotongpoo
 #
 
-__author__="ymotongpoo <ymotongpoo@gmail.com>"
-__date__ ="$2010/09/20 22:43:10$"
-__version__="$Revision: 0.10"
-__credits__="0x7d8 -- programming training"
+__author__ = "ymotongpoo <ymotongpoo@gmail.com>"
+__date__ = "$2010/09/20 22:43:10$"
+__version__ = "$Revision: 0.10"
+__credits__ = "0x7d8 -- programming training"
 
 from time import sleep
 import os
@@ -27,8 +27,8 @@ default_options = {'screen_name':'ymotongpoo',
                    'include_rts':'true',
                    'include_entities':'true',
                    'max_id':'9'*1,
-                   'since_id':'0'
-                   'count':'200'
+                   'since_id':'0',
+                   'count':'200',
                    }
 
 interval = 25 # interval sec. for each HTTP request
@@ -82,6 +82,27 @@ def minimum_id(tweets):
         raise e
 
 
+def maximum_id(tweets):
+    """
+    find maximum id from xml
+    @param tweets retreived xml
+    """
+    try:
+        tree = etree.parse(StringIO(tweets), etree.XMLParser())
+        statuses = tree.xpath('//statuses')
+        id_str = statuses[0].xpath('./status/id/text()')
+        ids = []
+        for id in id_str:
+            ids.append(int(id))
+        return str(max(ids))
+
+    except IndexError, e:
+        raise e
+    except ValueError, e:
+        raise e
+    
+
+
 def delete_first_line(string):
     """
     delete head line from assigned lines
@@ -91,58 +112,95 @@ def delete_first_line(string):
     return '\n'.join(lines[1:])
 
 
-def past_retreiver(max_id):
+def sort_status_by_id(statuses):
+    """
+    sort status by status id.
+    @param statuses list of statuses (all <status> elements in <statuses> tag)
+    """
+    def status_cmp(x, y):
+        return id(x.xpath('./id/text()')) - id(x.xpath('./id/text()'))
+
+    st_list = statuses[0].xpath('./status')
+    st_list.sort(status_cmp)
+    return '\n'.join([st.tostring() for st in st_list])
+
+
+def _past_retreiver(max_id):
     options = default_options
-    del options['since_id']
+    if 'since_id' in options:
+        del options['since_id']
+
     options['max_id'] = str(max_id)
+    print options
     return retreive_xml(**options)
 
 
-def future_retreiver(since_id):
+def _future_retreiver(since_id):
     options = default_options
-    del options['max_id']
+    if 'max_id' in options:
+        del options['max_id']
+
     options['since_id'] = str(since_id)
     return retreive_xml(**options)
 
 
 def runner(id = -1, filename = 'twitter.log', direction = 'past'):
     """
-    runner retreives all tweets 
+    runner() retreives all tweets 
     """
     if os.path.isfile(filename):
         fp = open(filename, 'a+')
     else:
-        fp = open(filename, 'wa+')
+        fp = open(filename, 'w+')
         fp.write(xml_header)
+        fp.close()
+        fp = open(filename, 'a+')
     try:
+        xml = 'initial string...'
         if id==-1:
             print '...done'
-            return
+            return False
         else:
+            print direction + " : " + str(id)
             if direction == 'past':
-                xml = past_retreiver(id)
+                xml = _past_retreiver(id)
             elif direction == 'future':
-                xml = future_retreiver(id)
+                xml = _future_retreiver(id)
             else:
-                return
-            xml = delete_first_line(xml)
+                return id
             fp.write(xml)
             fp.close()
 
             min_id = minimum_id(xml)
-            print min_id
+            print 'minimum id : ' + min_id
             
             sleep(interval)
-            runner(int(min_id)-1)
+            print 'passing ' + str(int(min_id)-1)
+            return int(min_id)-1
 
+    # Exception is for "Twitter is over capacity"
     except IndexError, e:
-    except ValueError, e:
-    except Exception, e: # for "Twitter is over capacity"
-        print xml
+        print xml + ' -> ' + str(e)
         fp.close()
         sleep(interval)
-        runner(id=id)
+        return id
+    
+    except ValueError, e:
+        print xml + ' -> ' + str(e)
+        fp.close()
+        sleep(interval)
+        return False
+
+    except Exception, e:
+        print xml + ' -> ' + str(e)
+        fp.close()
+        sleep(interval)
+        return id
+
 
 
 if __name__ == '__main__':
-    runner(id = 99999999999)
+    ret = 99999999999
+    direction = 'past'
+    while (ret != False):
+        ret = runner(id = ret, direction = direction)
