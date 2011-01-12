@@ -69,9 +69,11 @@ class BloggerOperator:
         query = service.Query()
         query.feed = '/feeds/default/blogs'
         feed = self.blogger_service.Get(query.ToUri())
-        if blog_title:
+
+        blog_id = 0
+        if blogtitle:
             for e in feed.entry:
-                if e.title.text == 'blog_title':
+                if e.title.text == blogtitle:
                     blog_id = e.GetSelfLink().href.split('/')[-1]
         else:
             blog_id = feed.entry[0].GetSelfLink().href.split('/')[-1]
