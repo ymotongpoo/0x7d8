@@ -40,6 +40,7 @@ TITLE = '[Twitter] %s'
 LOG_TIME_FMT = '%Y-%m-%dT%H:%M:%S'
 TIME_FMT = '%H:%M:%S'
 TWITER_ID = 'ymotongpoo'
+BLOGTITLE = 'YAMAGUCHI::Web::Life'
 STATUS_URL = 'http://twitter.com/%s/statuses/%s'
 USERID_URL = 'http://twitter.com/users/show.json?user_id=%s'
 
@@ -64,11 +65,16 @@ class BloggerOperator:
         self.blogger_service.server = 'www.blogger.com'
         self.blogger_service.ProgrammaticLogin()
 
-    def CreatePublicPost(self, title, content):
+    def CreatePublicPost(self, title, content, blogtitle=None):
         query = service.Query()
         query.feed = '/feeds/default/blogs'
         feed = self.blogger_service.Get(query.ToUri())
-        blog_id = feed.entry[0].GetSelfLink().href.split('/')[-1]
+        if blog_title:
+            for e in feed.entry:
+                if e.title.text == 'blog_title':
+                    blog_id = e.GetSelfLink().href.split('/')[-1]
+        else:
+            blog_id = feed.entry[0].GetSelfLink().href.split('/')[-1]
 
         entry = gdata.GDataEntry()
         entry.title = atom.Title('xhtml', title)
@@ -143,10 +149,10 @@ def log2content(filename, log_path='.'):
     return content
 
 
-def process(email, password, title, content):
+def process(email, password, title, content, blogtitle=None):
     blgr = BloggerOperator(email, password)
     blgr.ClientLogin()
-    blgr.CreatePublicPost(title, content)
+    blgr.CreatePublicPost(title, content, blogtitle)
 
 
 def usage():
@@ -181,7 +187,7 @@ if __name__=='__main__':
             title = TITLE % title_date
             content = log2content(log_name, log_path)
         
-            process(email, password, title, content)
+            process(email, password, title, content, BLOGTITLE)
         except Exception, e:
             print Exception, e
             sys.exit(2)
